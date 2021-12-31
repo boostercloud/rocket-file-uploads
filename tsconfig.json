@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./packages",
+    "declaration": true,
+    "importHelpers": true,
+    "module": "commonjs",
+    "strict": true,
+    "useUnknownInCatchVariables": false,
+    "target": "ES2019",
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "ES2019",
+      "ES2020"
+    ]
+  }
+}
