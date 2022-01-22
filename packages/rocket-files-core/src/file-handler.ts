@@ -1,5 +1,10 @@
 import { BoosterConfig, RocketDescriptor } from '@boostercloud/framework-types'
-import { RocketFilesParam, RocketFilesParams, RocketFilesProviderLibrary } from '@boostercloud/rocket-files-types'
+import {
+  ListItem,
+  RocketFilesParam,
+  RocketFilesParams,
+  RocketFilesProviderLibrary,
+} from '@boostercloud/rocket-files-types'
 
 export class FileHandler {
   private _provider: RocketFilesProviderLibrary
@@ -27,6 +32,11 @@ export class FileHandler {
   public presignedPut(directory: string, fileName: string): Promise<string> {
     this.checkDirectory(directory)
     return this._provider.presignedPut(this.config, directory, fileName)
+  }
+
+  public list(directory: string): Promise<Array<ListItem>> {
+    this.checkDirectory(directory)
+    return this._provider.list(this.config, directory)
   }
 
   private checkDirectory(directory: string): void {

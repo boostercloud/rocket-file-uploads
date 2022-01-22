@@ -4,8 +4,8 @@ import {
   containerName,
   RocketFilesParams,
   RocketFilesBlobUploaded,
-  RocketFilesUploadedFileEntity,
-  RocketFilesUploadedFileEvent,
+  UploadedFileEntity,
+  UploadedFileEvent,
   RocketFilesParam,
 } from '@boostercloud/rocket-files-types'
 
@@ -41,8 +41,8 @@ function toEventEnvelop(bindingData: unknown): EventEnvelope {
     entityID: id,
     kind: 'event',
     requestID: id,
-    typeName: RocketFilesUploadedFileEvent.name,
-    entityTypeName: RocketFilesUploadedFileEntity.name,
+    typeName: UploadedFileEvent.name,
+    entityTypeName: UploadedFileEntity.name,
     version: 1,
     value: {
       metadata: bindingData,
