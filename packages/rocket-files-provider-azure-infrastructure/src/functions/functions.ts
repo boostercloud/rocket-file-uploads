@@ -1,13 +1,15 @@
 import { ApplicationSynthStack, FunctionDefinition } from '@boostercloud/framework-provider-azure-infrastructure'
 import { BoosterConfig } from '@boostercloud/framework-types'
 import { RocketFilesParams } from '@boostercloud/rocket-files-types'
+import { getFunctionAppName } from '../helper'
+import { RocketFilesFileUploadedFunction } from './rocket-files-file-uploaded-function'
 
 export class Functions {
   static mountFunctions(params: RocketFilesParams, config: BoosterConfig): Array<FunctionDefinition> {
-    return []
+    return [RocketFilesFileUploadedFunction.getFunctionDefinition(config)]
   }
 
   static getFunctionAppName(params: RocketFilesParams, applicationSynthStack: ApplicationSynthStack): string {
-    return ''
+    return getFunctionAppName(applicationSynthStack)
   }
 }

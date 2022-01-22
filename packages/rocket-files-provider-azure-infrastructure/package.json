@@ -1,5 +1,5 @@
 {
-  "name": "@boostercloud/rocket-files-local-infrastructure",
+  "name": "@boostercloud/rocket-files-provider-azure-infrastructure",
   "version": "0.1.0",
   "description": "Azure Infrastructure part of the Booster rocket to integrate upload files",
   "keywords": [
@@ -28,19 +28,22 @@
     "@boostercloud/framework-types": ">= ^0.24.2"
   },
   "dependencies": {
-    "@boostercloud/rocket-files-types": "/Users/gonzalogarcia/dev/src/theam/booster_projects/rockets/rocket-files/packages/rocket-files-types/boostercloud-rocket-files-types-0.1.0.tgz"
+    "@boostercloud/rocket-files-types": "*"
   },
   "devDependencies": {
-    "@boostercloud/framework-provider-local-infrastructure": "^0.24.2",
+    "@boostercloud/framework-provider-azure-infrastructure": "^0.24.2",
+    "@cdktf/provider-azurerm": "0.2.179",
+    "@types/mustache": "^4.1.0",
     "@types/node": "16.4.11",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
-    "@types/mustache": "^4.1.0",
+    "cdktf": "0.7.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-prettier": "^3.4.0",
     "metadata-booster": "^0.3.1",
+    "mustache": "4.1.0",
     "prettier": "^2.3.2",
     "typescript": "^4.3.5"
   },
@@ -48,8 +51,7 @@
     "lint:check": "eslint --ext '.js,.ts' **/*.ts",
     "lint:fix": "eslint --quiet --fix --ext '.js,.ts' **/*.ts",
     "compile": "tsc -b tsconfig.json",
-    "clean": "rimraf ./dist tsconfig.tsbuildinfo",
-    "prepack": "npm run compile"
+    "clean": "rimraf ./dist tsconfig.tsbuildinfo"
   },
   "bugs": {
     "url": "https://github.com/boostercloud/rocket-files/issues"
