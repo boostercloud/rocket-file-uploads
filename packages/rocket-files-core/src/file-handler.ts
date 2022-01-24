@@ -12,14 +12,7 @@ export class FileHandler {
   private _parameters: RocketFilesParams
 
   constructor(readonly config: BoosterConfig) {
-    this._rocket = config.rockets?.find(
-      (rocket) =>
-        rocket.packageName == '@boostercloud/rocket-files-provider-azure-infrastructure' ||
-        rocket.packageName == '@boostercloud/rocket-files-provider-local-infrastructure'
-    ) as RocketDescriptor
-    if (!this._rocket) {
-      throw new Error('Rocket not found. Please make sure you have setup the rocket packageName correctly')
-    }
+    this._rocket = FileHandler.getRocketFromConfiguration(config)
     this._parameters = this._rocket.parameters as RocketFilesParams
     this._provider = require(this._parameters.rocketProviderPackage)
   }
@@ -43,5 +36,17 @@ export class FileHandler {
     if (!this._parameters.params.map((param: RocketFilesParam) => param.directory).includes(directory)) {
       throw new Error(`Invalid directory ${directory}`)
     }
+  }
+
+  private static getRocketFromConfiguration(config: BoosterConfig): RocketDescriptor {
+    const rocket = config.rockets?.find(
+      (rocket) =>
+        rocket.packageName == '@boostercloud/rocket-files-provider-azure-infrastructure' ||
+        rocket.packageName == '@boostercloud/rocket-files-provider-local-infrastructure'
+    ) as RocketDescriptor
+    if (!rocket) {
+      throw new Error('Rocket not found. Please make sure you have setup the rocket packageName correctly')
+    }
+    return rocket
   }
 }

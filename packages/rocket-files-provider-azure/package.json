@@ -30,7 +30,8 @@
 	},
 	"dependencies": {
 		"@boostercloud/rocket-files-types": "*",
-		"@azure/storage-blob": "^12.0.0"
+		"@azure/storage-blob": "^12.0.0",
+		"@azure/functions": "3.0.0"
 	},
 	"devDependencies": {
 		"@types/node": "16.4.11",

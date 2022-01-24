@@ -1,12 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { BoosterConfig, EventEnvelope, UUID } from '@boostercloud/framework-types'
 import {
-  containerName,
-  RocketFilesParams,
   RocketFilesBlobUploaded,
+  RocketFilesParams,
   UploadedFileEntity,
   UploadedFileEvent,
-  RocketFilesParam,
 } from '@boostercloud/rocket-files-types'
 
 export async function fileUploaded(
@@ -14,27 +11,24 @@ export async function fileUploaded(
   request: unknown,
   params: RocketFilesParams
 ): Promise<unknown> {
-  // @ts-ignore
-  const bindingData = request.bindingData
-  const blobTrigger = bindingData.blobTrigger as string
-  const directoryFound = findDirectoryInParams(params, blobTrigger)
-  if (!directoryFound) {
-    console.info(`Ignoring blobTrigger ${blobTrigger}`)
-    return Promise.resolve()
+  const provider = require(params.rocketProviderPackage)
+  const metadata = provider.getMetadataFromRequest(request)
+  if (provider.validateMetadata(params, metadata)) {
+    return processEvent(config, metadata)
   }
-  return processEvent(config, bindingData)
+  return Promise.resolve()
 }
 
-async function processEvent(config: BoosterConfig, bindingData: unknown): Promise<void> {
+async function processEvent(config: BoosterConfig, metadata: unknown): Promise<void> {
   try {
-    const envelop = toEventEnvelop(bindingData)
+    const envelop = toEventEnvelop(metadata)
     await config.provider.events.store([envelop], config, console)
   } catch (e) {
     console.log('[ROCKET#files] An error occurred while performing a PutItem operation: ', e)
   }
 }
 
-function toEventEnvelop(bindingData: unknown): EventEnvelope {
+function toEventEnvelop(metadata: unknown): EventEnvelope {
   const id = UUID.generate()
   return {
     createdAt: new Date().toISOString(),
@@ -45,13 +39,7 @@ function toEventEnvelop(bindingData: unknown): EventEnvelope {
     entityTypeName: UploadedFileEntity.name,
     version: 1,
     value: {
-      metadata: bindingData,
+      metadata: metadata,
     } as RocketFilesBlobUploaded,
   } as EventEnvelope
-}
-
-function findDirectoryInParams(params: RocketFilesParams, blobTrigger: string): string | undefined {
-  return params.params
-    .map((param: RocketFilesParam) => param.directory)
-    .find((directory: string) => blobTrigger.startsWith(`${containerName}/${directory}`))
 }

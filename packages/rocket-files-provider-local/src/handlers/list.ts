@@ -1,13 +1,22 @@
 import { BoosterConfig } from '@boostercloud/framework-types'
-import { ListItem } from '@boostercloud/rocket-files-types'
+import { containerName, ListItem } from '@boostercloud/rocket-files-types'
+import * as fs from 'fs'
+import * as path from 'path'
 
 export async function list(config: BoosterConfig, directory: string): Promise<Array<ListItem>> {
-  return [
-    {
-      name: 'local file',
+  const result = [] as Array<ListItem>
+  // TODO validate directory
+  const _path = path.join(process.cwd(), containerName, directory)
+  const files = fs.readdirSync(_path)
+  files.forEach((file) => {
+    const stats = fs.statSync(path.join(_path, file))
+    result.push({
+      name: file,
       properties: {
-        lastModified: new Date(),
+        lastModified: stats.ctime,
       },
-    },
-  ] as Array<ListItem>
+    })
+  })
+
+  return result
 }
