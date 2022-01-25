@@ -1,6 +1,6 @@
 {
   "name": "rocket-files",
-  "private": true,
+  "private": false,
   "scripts": {
     "build": "lerna run compile",
     "clean-compile": "lerna run clean && lerna clean --yes && lerna bootstrap && lerna run compile"
