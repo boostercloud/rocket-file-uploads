@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-files-types",
-  "version": "0.1.2",
+  "version": "0.1.0",
   "description": "Common types that are part of the Booster rocket to integrate upload files",
   "keywords": [
     "Booster",
