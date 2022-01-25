@@ -117,7 +117,7 @@ This returns the following payload:
 ```json
 {
   "data": {
-    "FileUploadPut": "https://yourapplication.blob.core.windows.net/rocketfiles/folder01%2F3.txt?sv=2020-10-02&st=2022-01-24T16%3A49%3A29Z&se=2022-01-24T16%3A50%3A55Z&sr=b&sp=w&sig=rmODo45f2342svKuxHNWd6f3fywvTM9dvCm1PBResd8%3D"
+    "FileUploadPut": "https://yourapplication.blob.core.windows.net/rocketfiles/folder01%2F3.txt?sv=2020-10-02&st=2022-01-24T16%3A49%3A29Z&se=2022-01-24T16%3A50%3A55Z&sr=b&sp=w&sig=xxxxxxxxxx%3D"
   }
 }
 ```
@@ -200,7 +200,7 @@ This returns the following payload:
 ```json
 {
   "data": {
-    "FileUploadGet": "https://testrocketsfiles013rocke.blob.core.windows.net/rocketfiles/folder01%2F3.txt?sv=2020-10-02&st=2022-01-24T16%3A51%3A35Z&se=2022-01-24T16%3A53%3A02Z&sr=b&sp=r&sig=w1PVdHD0OCP9vDfa7yOhBM5DRKga%2FaxJe5LGFMe2MzU%3D"
+    "FileUploadGet": "https://testrocketsfiles013rocke.blob.core.windows.net/rocketfiles/folder01%2F3.txt?sv=2020-10-02&st=2022-01-24T16%3A51%3A35Z&se=2022-01-24T16%3A53%3A02Z&sr=b&sp=r&sig=xxxxxxxx%3D"
   }
 }
 ```
@@ -283,10 +283,10 @@ export class UploadedFileEntityReadModel {
 Mutation example:
 ```graphql
 query{
-  UploadedFileEntityReadModel(id: "7edd9f0331e61001553e619c3372279b"){
-    id
-    metadata
-  }
+    UploadedFileEntityReadModels(filter: {}){
+        id
+        metadata
+    }
 }
 ```
 
@@ -297,7 +297,7 @@ This returns the following payload:
     "UploadedFileEntityReadModel": {
       "id": "7edd9f0331e61001553e619c3372279b",
       "metadata": {
-        "invocationId": "8891530f65-5edc-42283-97fb-b8d6e12809fa6",
+        "invocationId": "xxxxxx",
         "blobTrigger": "rocketfiles/folder02/1.txt",
         "uri": "https://yourapplication.blob.core.windows.net/rocketfiles/folder02/1.txt",
         "properties": {
@@ -306,9 +306,9 @@ This returns the following payload:
           "contentEncoding": null,
           "contentLanguage": null,
           "length": 9,
-          "contentMD5": "81q/vXAtywI+o32L3vJiVg==",
+          "contentMD5": "xxxxx",
           "contentType": "application/octet-stream",
-          "eTag": "\"0x8D9DD33BCEC7A6E6\"",
+          "eTag": "\"0xxxxxxx\"",
           "created": "2022-01-22T19:14:40+00:00",
           "lastModified": "2022-01-22T19:17:18+00:00",
           "blobType": 2,
@@ -335,6 +335,36 @@ This returns the following payload:
 }
 ```
 
+For Local
+
+```shell
+{
+  "data": {
+    "UploadedFileEntityReadModels": [
+      {
+        "id": "1",
+        "metadata": {
+          "name": "3.txt"
+        }
+      },
+      {
+        "id": "2",
+        "metadata": {
+          "fileName": "1.txt",
+          "eventType": "rename"
+        }
+      },
+      {
+        "id": "3",
+        "metadata": {
+          "name": "1.txt"
+        }
+      }
+    ]
+  }
+}
+```
+
 ## Events
 For each upload file a new event will be generated.
 
@@ -344,14 +374,14 @@ On Azure the event will be like this:
 {
     "version": 1,
     "kind": "snapshot",
-    "requestID": "2342-c058-41f3-8e4d-9be09b169fdf",
-    "entityID": "80629004-c058-41f3-343-23",
+    "requestID": "xxxxxx",
+    "entityID": "xxxxx",
     "entityTypeName": "UploadedFileEntity",
     "typeName": "UploadedFileEntity",
     "value": {
-        "id": "43324342342342342",
+        "id": "xxxxx",
         "metadata": {
-            "invocationId": "2342-c621-4d9b-ae0a-fe23f2938752",
+            "invocationId": "xxxxxx",
             "blobTrigger": "rocketfiles/folder02/folder01_3.txt",
             "uri": "https://yourapplication.blob.core.windows.net/rocketfiles/folder02/folder01_3.txt",
             "properties": {
@@ -360,9 +390,9 @@ On Azure the event will be like this:
                 "contentEncoding": null,
                 "contentLanguage": null,
                 "length": 9,
-                "contentMD5": "nQztIb23423zfx/7p1w9+ew==",
+                "contentMD5": "xxxx",
                 "contentType": "text/plain",
-                "eTag": "\"0x8D9DDD34234EDA9B3D\"",
+                "eTag": "\"0xXXXXX\"",
                 "created": "2022-01-22T19:20:53+00:00",
                 "lastModified": "2022-01-22T19:20:53+00:00",
                 "blobType": 2,
@@ -396,12 +426,12 @@ On Local, the event will be:
 {
   "version": 1,
   "kind": "snapshot",
-  "requestID": "23423-6ffc-4dca-8725-3b6d0d1e1052",
-  "entityID": "23423-6ffc-4dca-8725-3b6d0d1e1052",
+  "requestID": "xxxxxx",
+  "entityID": "xxxxxx",
   "entityTypeName": "UploadedFileEntity",
   "typeName": "UploadedFileEntity",
   "value": {
-    "id": "52f23423491a0921a7d4cc971056700",
+    "id": "xxxxx",
     "metadata": {
       "fileName": "1.txt"
     }
