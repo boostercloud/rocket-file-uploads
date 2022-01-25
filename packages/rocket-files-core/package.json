@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-files-core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Azure Core part of the Booster rocket to integrate upload files",
   "keywords": [
     "Booster",
@@ -28,7 +28,7 @@
     "@boostercloud/framework-types": ">= ^0.24.2"
   },
   "dependencies": {
-    "@boostercloud/rocket-files-types": "*"
+    "@boostercloud/rocket-files-types": "^0.2.0"
   },
   "devDependencies": {
     "@types/node": "16.4.11",

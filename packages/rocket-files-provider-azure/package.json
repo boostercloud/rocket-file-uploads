@@ -1,6 +1,6 @@
 {
 	"name": "@boostercloud/rocket-files-provider-azure",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Azure part of the Booster rocket to integrate upload files",
 	"keywords": [
 		"Booster",
@@ -29,9 +29,9 @@
 		"@boostercloud/framework-types": ">= ^0.24.2"
 	},
 	"dependencies": {
-		"@boostercloud/rocket-files-types": "*",
+		"@azure/functions": "3.0.0",
 		"@azure/storage-blob": "^12.0.0",
-		"@azure/functions": "3.0.0"
+		"@boostercloud/rocket-files-types": "^0.2.0"
 	},
 	"devDependencies": {
 		"@types/node": "16.4.11",
@@ -45,12 +45,12 @@
 		"prettier": "^2.3.2",
 		"typescript": "^4.3.5"
 	},
-  "scripts": {
-    "lint:check": "eslint --ext '.js,.ts' **/*.ts",
-    "lint:fix": "eslint --quiet --fix --ext '.js,.ts' **/*.ts",
-    "compile": "tsc -b tsconfig.json",
-    "clean": "rimraf ./dist tsconfig.tsbuildinfo"
-  },
+	"scripts": {
+		"lint:check": "eslint --ext '.js,.ts' **/*.ts",
+		"lint:fix": "eslint --quiet --fix --ext '.js,.ts' **/*.ts",
+		"compile": "tsc -b tsconfig.json",
+		"clean": "rimraf ./dist tsconfig.tsbuildinfo"
+	},
 	"bugs": {
 		"url": "https://github.com/boostercloud/rocket-files/issues"
 	}
