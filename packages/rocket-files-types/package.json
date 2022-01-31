@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-files-types",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Common types that are part of the Booster rocket to integrate upload files",
   "keywords": [
     "Booster",
@@ -24,8 +24,8 @@
     "url": "git+https://github.com/boostercloud/rocket-files.git"
   },
   "peerDependencies": {
-    "@boostercloud/framework-core": ">= ^0.24.2",
-    "@boostercloud/framework-types": ">= ^0.24.2"
+    "@boostercloud/framework-core": ">=0.24.2",
+    "@boostercloud/framework-types": ">=0.24.2"
   },
   "devDependencies": {
     "metadata-booster": "^0.3.1",

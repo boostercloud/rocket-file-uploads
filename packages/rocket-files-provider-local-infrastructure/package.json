@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-files-provider-local-infrastructure",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Azure Infrastructure part of the Booster rocket to integrate upload files",
   "keywords": [
     "Booster",
@@ -24,11 +24,11 @@
     "url": "git+https://github.com/boostercloud/rocket-files.git"
   },
   "peerDependencies": {
-    "@boostercloud/framework-core": ">= ^0.24.2",
-    "@boostercloud/framework-types": ">= ^0.24.2"
+    "@boostercloud/framework-core": ">=0.24.2",
+    "@boostercloud/framework-types": ">=0.24.2"
   },
   "dependencies": {
-    "@boostercloud/rocket-files-types": "^0.2.0"
+    "@boostercloud/rocket-files-types": "^0.2.1"
   },
   "devDependencies": {
     "@boostercloud/framework-provider-local-infrastructure": "^0.24.2",
