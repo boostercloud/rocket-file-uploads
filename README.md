@@ -20,16 +20,34 @@ This rocket also provides a Booster Event each time a file is uploaded.
 ## Usage
 
 Install needed **dependency** packages:
- - @boostercloud/rocket-files-core
- - @boostercloud/rocket-files-types
+
+```bash
+npm install --save @boostercloud/rocket-files-core @boostercloud/rocket-files-types
+```
 
 Depending on your provider you could need some of the following **dependency** packages:
-- @boostercloud/rocket-files-provider-local
-- @boostercloud/rocket-files-provider-azure
+
+_Local Provider:_
+```bash
+npm install --save @boostercloud/rocket-files-provider-local
+```
+
+_Azure Provider:_
+```bash
+npm install --save @boostercloud/rocket-files-provider-azure
+```
 
 Also, you will need a **devDependency** in your project, depending on your provider:
-- @boostercloud/rocket-files-provider-azure-infrastructure
-- @boostercloud/rocket-files-provider-local-infrastructure
+
+_Local Provider:_
+```bash
+npm install --save-dev @boostercloud/rocket-files-provider-local-infrastructure
+```
+
+_Azure Provider_
+```bash
+npm install --save-dev @boostercloud/rocket-files-provider-azure-infrastructure
+```
 
 In your Booster config file, configure your `BoosterRocketFiles`:
 
