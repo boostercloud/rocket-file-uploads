@@ -1,0 +1,6 @@
+import { BoosterConfig } from '@boostercloud/framework-types'
+import { containerName } from '@boostercloud/rocket-file-uploads-types'
+
+export async function presignedPut(config: BoosterConfig, directory: string, fileName: string): Promise<string> {
+  return `http://localhost:3000/${containerName}/${directory}/${fileName}`
+}

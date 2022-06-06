@@ -3,11 +3,14 @@
 This package is a configurable rocket to add a storage API to your Booster applications.
 
 ## Supported Providers
+
 - Azure Provider
 - Local Provider
 
 ## Overview
+
 This rocket provides some methods to access files stores in your cloud provider:
+
 - `presignedPut`: Returns a presigned put url and the necessary form params. With this url files can be uploaded directly to your provider.
 - `presignedGet`: Returns a presigned get url to download a file. With this url files can be downloaded directly from your provider.
 - `list`: Returns a list of files stored in the provider.
@@ -16,37 +19,40 @@ These methods may be used from a Command in your project secured via JWT Token.
 
 This rocket also provides a Booster Event each time a file is uploaded.
 
-
 ## Usage
 
 Install needed **dependency** packages:
 
 ```bash
-npm install --save @boostercloud/rocket-files-core @boostercloud/rocket-files-types
+npm install --save @boostercloud/rocket-file-uploads-core @boostercloud/rocket-file-uploads-types
 ```
 
 Depending on your provider you could need some of the following **dependency** packages:
 
 _Local Provider:_
+
 ```bash
-npm install --save @boostercloud/rocket-files-provider-local
+npm install --save @boostercloud/rocket-file-uploads-local
 ```
 
 _Azure Provider:_
+
 ```bash
-npm install --save @boostercloud/rocket-files-provider-azure
+npm install --save @boostercloud/rocket-file-uploads-azure
 ```
 
 Also, you will need a **devDependency** in your project, depending on your provider:
 
 _Local Provider:_
+
 ```bash
-npm install --save-dev @boostercloud/rocket-files-provider-local-infrastructure
+npm install --save-dev @boostercloud/rocket-file-uploads-local-infrastructure
 ```
 
 _Azure Provider_
+
 ```bash
-npm install --save-dev @boostercloud/rocket-files-provider-azure-infrastructure
+npm install --save-dev @boostercloud/rocket-file-uploads-azure-infrastructure
 ```
 
 In your Booster config file, configure your `BoosterRocketFiles`:
@@ -54,8 +60,8 @@ In your Booster config file, configure your `BoosterRocketFiles`:
 ```typescript
 import { Booster } from '@boostercloud/framework-core'
 import { BoosterConfig } from '@boostercloud/framework-types'
-import { BoosterRocketFiles } from '@boostercloud/rocket-files-core'
-import { RocketFilesParams, RocketProviderPackageType } from '@boostercloud/rocket-files-types'
+import { BoosterRocketFiles } from '@boostercloud/rocket-file-uploads-core'
+import { RocketFilesParams, RocketProviderPackageType } from '@boostercloud/rocket-file-uploads-types'
 
 const directories = [
   {
@@ -66,8 +72,8 @@ const directories = [
   },
 ]
 
-const azureRocketProviderPackage = '@boostercloud/rocket-files-provider-azure' as RocketProviderPackageType
-const localRocketProviderPackage = '@boostercloud/rocket-files-provider-local' as RocketProviderPackageType
+const azureRocketProviderPackage = '@boostercloud/rocket-file-uploads-azure' as RocketProviderPackageType
+const localRocketProviderPackage = '@boostercloud/rocket-file-uploads-local' as RocketProviderPackageType
 
 const exampleAzureParameters = {
   rocketProviderPackage: azureRocketProviderPackage,
@@ -97,17 +103,18 @@ function buildRocket(config: BoosterConfig, params: RocketFilesParams): BoosterR
 ```
 
 Available parameters are:
-- `rocketProviderPackage` Rocket package that handle your infrastructure.
-- `params[directory]` A list of folders 
 
+- `rocketProviderPackage` Rocket package that handle your infrastructure.
+- `params[directory]` A list of folders
 
 ### PresignedPut Usage
+
 Create a command in your application and call the `presignedPut` method on the FileHandler class with the `directory` and `filename` you want to upload.
 
 ```javascript
 import { Booster, Command, Returns } from '@boostercloud/framework-core'
 import { Register } from '@boostercloud/framework-types'
-import { FileHandler } from '@boostercloud/rocket-files-core'
+import { FileHandler } from '@boostercloud/rocket-file-uploads-core'
 
 @Command({
   authorize: 'all',
@@ -125,6 +132,7 @@ export class FileUploadPut {
 ```
 
 Mutation example:
+
 ```graphql
 mutation {
     FileUploadPut(input: {directory: "folder01", fileName: "3.txt"})
@@ -132,6 +140,7 @@ mutation {
 ```
 
 This returns the following payload:
+
 ```json
 {
   "data": {
@@ -142,8 +151,8 @@ This returns the following payload:
 
 For Local Provider, the extra parameters will not be returned
 
-
 That can be used in a new PUT rest call replacing the `AZ_URL` with the `FileUploadPut` field from the previous response:
+
 ```shell
 #!/bin/bash
 
@@ -185,12 +194,13 @@ Local Provider will write files on `./rocketfiles` folder
 **Note**: Azure will return a 201 status but Local will return a 200
 
 ### PresignedGet Usage
+
 Create a command in your application and call the `presignedGet` method on the FileHandler class with the `directory` and `filename` you want to get.
 
 ```javascript
 import { Booster, Command, Returns } from '@boostercloud/framework-core'
 import { Register } from '@boostercloud/framework-types'
-import { FileHandler } from '@boostercloud/rocket-files-core'
+import { FileHandler } from '@boostercloud/rocket-file-uploads-core'
 
 @Command({
   authorize: 'all',
@@ -208,6 +218,7 @@ public static async handle(command: FileUploadGet, register: Register): Promise<
 ```
 
 Mutation example:
+
 ```graphql
 mutation {
     FileUploadGet(input: {directory: "folder01", fileName: "3.txt"})
@@ -215,6 +226,7 @@ mutation {
 ```
 
 This returns the following payload:
+
 ```json
 {
   "data": {
@@ -226,19 +238,20 @@ This returns the following payload:
 For Local Provider, the extra parameters will not be returned
 
 That can be used in a new GET rest call with the `FileUploadGet` field from the previous response:
+
 ```shell
 curl --request GET '<FileUploadGet>'
 ```
 
-
 ### List Usage
+
 Create a command in your application and call the `list` method on the FileHandler class with the `directory` you want to get the info and return the formatted results
 
 ```javascript
 import { Booster, Command, Returns } from '@boostercloud/framework-core'
 import { Register } from '@boostercloud/framework-types'
-import { FileHandler } from '@boostercloud/rocket-files-core'
-import { ListItem } from '@boostercloud/rocket-files-types'
+import { FileHandler } from '@boostercloud/rocket-file-uploads-core'
+import { ListItem } from '@boostercloud/rocket-file-uploads-types'
 
 @Command({
   authorize: 'all',
@@ -257,6 +270,7 @@ public static async handle(command: FileUploadList, register: Register): Promise
 ```
 
 Mutation example:
+
 ```graphql
 mutation {
   FileUploadList(input: {directory: "folder02"}) 
@@ -264,6 +278,7 @@ mutation {
 ```
 
 This returns the following payload:
+
 ```json
 {
   "data": {
@@ -275,12 +290,13 @@ This returns the following payload:
 Local Provider only return `lastModified` property for each file
 
 ### Uploaded files event Usage
+
 Create a Booster ReadModel to provide a view of the files uploaded to a directory
 
 ```javascript
 import { Projects, ReadModel } from '@boostercloud/framework-core'
 import { ProjectionResult } from '@boostercloud/framework-types'
-import { UploadedFileEntity } from '@boostercloud/rocket-files-types'
+import { UploadedFileEntity } from '@boostercloud/rocket-file-uploads-types'
 
 @ReadModel({
   authorize: 'all', // Specify authorized roles here. Use 'all' to authorize anyone
@@ -299,6 +315,7 @@ export class UploadedFileEntityReadModel {
 ```
 
 Mutation example:
+
 ```graphql
 query{
     UploadedFileEntityReadModels(filter: {}){
@@ -309,6 +326,7 @@ query{
 ```
 
 This returns the following payload:
+
 ```json
 {
   "data": {
@@ -384,6 +402,7 @@ For Local
 ```
 
 ## Events
+
 For each upload file a new event will be generated.
 
 On Azure the event will be like this:
@@ -460,9 +479,11 @@ On Local, the event will be:
 ```
 
 ## Azure Roles
+
 For uploading files to Azure you need the `Storage Blob Data Contributor` role. This can be assigned to a user using the portal or with the next scripts:
 
 First, check if you have the correct permissions:
+
 ```shell
 ACCOUNT_NAME="<STORAGE ACCOUNT NAME>"
 CONTAINER_NAME="<CONTAINER NAME>"
@@ -474,6 +495,7 @@ az storage blob exists --account-name $ACCOUNT_NAME `
 ```
 
 If you don't have it, then run this script as admin:
+
 ```shell
 ACCOUNT_NAME="<STORAGE ACCOUNT NAME>"
 CONTAINER_NAME="<CONTAINER NAME>"
@@ -488,4 +510,5 @@ az role assignment create \
 ```
 
 ## Security
+
 Local Provider doesn't check `paths`. You should check that the `directory` and `files` passed as paratemers are valid.
