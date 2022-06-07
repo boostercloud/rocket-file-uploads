@@ -1,5 +1,5 @@
 {
-  "name": "rocket-files",
+  "name": "@boostercloud/rocket-file-uploads",
   "private": false,
   "scripts": {
     "build": "lerna run compile",
@@ -12,7 +12,8 @@
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-prettier": "3.4.0",
+    "lerna": "^4.0.0",
     "metadata-booster": "^0.3.1",
-    "lerna": "^4.0.0"
+    "typescript": "4.4"
   }
 }
