@@ -1,0 +1,51 @@
+{
+  "name": "rocket-file-uploads-integration",
+  "description": "File Upload Rocket Integration Tests",
+  "version": "0.3.0",
+  "author": "Booster Cloud",
+  "dependencies": {
+    "@boostercloud/framework-core": "^0.28.5",
+    "@boostercloud/framework-types": "^0.28.5",
+    "@boostercloud/framework-provider-local": "*"
+  },
+  "devDependencies": {
+    "@boostercloud/framework-provider-local": "^0.28.5",
+    "@boostercloud/framework-provider-local-infrastructure": "^0.28.5",
+    "@boostercloud/rocket-file-uploads-core": "^0.3.0",
+    "@boostercloud/rocket-file-uploads-types": "^0.3.0",
+    "rimraf": "^3.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "mocha": "8.4.0",
+    "@types/mocha": "8.2.2",
+    "nyc": "15.1.0",
+    "prettier":  "^2.3.2",
+    "typescript": "^4.5.4",
+    "ts-node": "10.8.1",
+    "@types/node": "16.4.11",
+    "ttypescript": "1.5.13",
+    "metadata-booster": "^0.4.1",
+    "child-process-promise": "^2.2.1",
+    "@types/child-process-promise": "^2.2.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "homepage": "https://booster.cloud",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "repository": "https://github.com/boostercloud/rocket-file-uploads",
+  "scripts": {
+    "lint:check": "eslint --ext '.js,.ts' **/*.ts",
+    "lint:fix": "eslint --quiet --fix --ext '.js,.ts' **/*.ts",
+    "compile": "ttsc -b tsconfig.json",
+    "clean": "rimraf ./dist tsconfig.tsbuildinfo",
+    "test": "AWS_SDK_LOAD_CONFIG=true BOOSTER_ENV=test nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "integration": "npm run integration/local",
+    "integration/local": "BOOSTER_ENV=local mocha --forbid-only --exit --config \"integration/provider-specific/local/.mocharc.yml\" \"integration/provider-specific/local/**/*.integration.ts\""
+  },
+  "types": "lib/index.d.ts"
+}
