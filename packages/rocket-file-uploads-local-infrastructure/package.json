@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-local-infrastructure",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "File Uploads Booster Rocket Local Infrastructure Library",
   "keywords": [
     "Booster",
@@ -28,7 +28,7 @@
     "@boostercloud/framework-types": "^0.30.4"
   },
   "dependencies": {
-    "@boostercloud/rocket-file-uploads-types": "^0.2.2"
+    "@boostercloud/rocket-file-uploads-types": "^0.2.3"
   },
   "devDependencies": {
     "@boostercloud/framework-provider-local-infrastructure": "^0.30.4",
