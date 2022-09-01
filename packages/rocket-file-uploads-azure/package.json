@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-azure",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "File Uploads Booster Rocket Azure Integration Library",
   "keywords": [
     "Booster",
@@ -25,8 +25,8 @@
   },
   "peerDependencies": {
     "@boostercloud/framework-core": "^0.30.4",
-    "@boostercloud/framework-types": "^0.30.4",
-    "@boostercloud/framework-provider-azure": "^0.30.4"
+    "@boostercloud/framework-provider-azure": "^0.30.4",
+    "@boostercloud/framework-types": "^0.30.4"
   },
   "dependencies": {
     "@azure/functions": "3.0.0",
@@ -34,6 +34,7 @@
     "@boostercloud/rocket-file-uploads-types": "^0.3.0"
   },
   "devDependencies": {
+    "@boostercloud/metadata-booster": "^0.30.4",
     "@types/node": "16.4.11",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
@@ -41,7 +42,6 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-prettier": "^3.4.0",
-    "@boostercloud/metadata-booster": "^0.30.4",
     "prettier": "^2.3.2",
     "typescript": "4.5.4"
   },
