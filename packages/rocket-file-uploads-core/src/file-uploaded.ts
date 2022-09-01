@@ -34,6 +34,7 @@ function toEventEnvelop(metadata: unknown): EventEnvelope {
     createdAt: new Date().toISOString(),
     entityID: id,
     kind: 'event',
+    superKind: 'booster',
     requestID: id,
     typeName: UploadedFileEvent.name,
     entityTypeName: UploadedFileEntity.name,
