@@ -21,7 +21,7 @@ export class TerraformFunctionApp {
     const cosmosDbConnectionString = applicationSynthStack.cosmosdbDatabase?.primaryKey
     const functionAppName = getFunctionAppName(applicationSynthStack)
 
-    const id = utils.toTerraformName(applicationSynthStack.appPrefix, 'webhookfunc')
+    const id = utils.toTerraformName(applicationSynthStack.appPrefix, 'rffunc')
     return new FunctionApp(terraformStack, id, {
       name: functionAppName,
       location: resourceGroup.location,

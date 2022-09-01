@@ -14,7 +14,7 @@ export class TerraformStorageAccount {
   ): StorageAccount {
     const id = utils.toTerraformName(appPrefix, 'rfst')
     return new StorageAccount(terraformStack, id, {
-      name: storageName(config.appName),
+      name: storageName(config.appName, config.environmentName),
       resourceGroupName: resourceGroup.name,
       location: resourceGroup.location,
       accountReplicationType: 'LRS',
