@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-local",
-  "version": "0.3.0",
+  "version": "0.2.1",
   "description": "File Uploads Booster Rocket Local Integration Library",
   "keywords": [
     "Booster",
