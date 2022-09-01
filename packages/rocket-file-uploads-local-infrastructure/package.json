@@ -28,7 +28,7 @@
     "@boostercloud/framework-types": "^0.30.4"
   },
   "dependencies": {
-    "@boostercloud/rocket-file-uploads-types": "^0.3.0"
+    "@boostercloud/rocket-file-uploads-types": "^0.2.2"
   },
   "devDependencies": {
     "@boostercloud/framework-provider-local-infrastructure": "^0.30.4",

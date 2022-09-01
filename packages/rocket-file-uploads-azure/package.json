@@ -31,7 +31,7 @@
   "dependencies": {
     "@azure/functions": "3.0.0",
     "@azure/storage-blob": "^12.0.0",
-    "@boostercloud/rocket-file-uploads-types": "^0.3.0"
+    "@boostercloud/rocket-file-uploads-types": "^0.2.2"
   },
   "devDependencies": {
     "@boostercloud/metadata-booster": "^0.30.4",

@@ -12,7 +12,7 @@ export function validateMetadata(params: RocketFilesParams, metadata: ContextBin
   )
 
   if (!directoryFound) {
-    console.info(`Ignoring blobTrigger ${blobTrigger}`)
+    console.info(`Ignoring blob trigger ${blobTrigger}`)
     return false
   }
   return true
