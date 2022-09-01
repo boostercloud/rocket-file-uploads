@@ -6,7 +6,7 @@ import { RocketFilesFileUploadedFunction } from './rocket-files-file-uploaded-fu
 
 export class Functions {
   static mountFunctions(params: RocketFilesParams, config: BoosterConfig): Array<FunctionDefinition> {
-    return [RocketFilesFileUploadedFunction.getFunctionDefinition(config)]
+    return [RocketFilesFileUploadedFunction.getFunctionDefinition(config, params.containerName)]
   }
 
   static getFunctionAppName(params: RocketFilesParams, applicationSynthStack: ApplicationSynthStack): string {

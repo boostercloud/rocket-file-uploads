@@ -10,5 +10,6 @@ export type RocketProviderPackageType =
 
 export interface RocketFilesParams {
   rocketProviderPackage: RocketProviderPackageType
+  containerName: string
   params: Array<RocketFilesParam>
 }
