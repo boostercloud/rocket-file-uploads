@@ -1,6 +1,6 @@
 import { BoosterConfig } from '@boostercloud/framework-types'
 import { ApplicationSynthStack, RocketUtils } from '@boostercloud/framework-provider-azure-infrastructure'
-import { containerName, RocketFilesParams } from '@boostercloud/rocket-file-uploads-types'
+import { RocketFilesParams } from '@boostercloud/rocket-file-uploads-types'
 import { TerraformFunctionApp } from './terraform-function-app'
 import { TerraformStorageAccount } from './terraform-storage-account'
 import { TerraformStorageContainer } from './terraform-storage-container'
@@ -27,7 +27,7 @@ export class Synth {
       terraformStack,
       appPrefix,
       rocketStorage,
-      containerName,
+      params.containerName,
       utils
     )
     rocketStack.push(blobContainer)

@@ -1,5 +1,5 @@
 import * as storage from '@azure/storage-blob'
-import { containerName, ListItem } from '@boostercloud/rocket-file-uploads-types'
+import { ListItem } from '@boostercloud/rocket-file-uploads-types'
 
 /**
  * Write SasUrl requires `Storage Blob Data Contributor` role.
@@ -13,6 +13,7 @@ export class BlobService {
   constructor(readonly storageAccount: string) {}
 
   public getBlobSasUrl(
+    containerName: string,
     directory: string,
     fileName: string,
     permissions = this.DEFAULT_PERMISSIONS,
@@ -23,6 +24,7 @@ export class BlobService {
     const credentials = this.getCredentials(key)
     const client = this.getClient(credentials)
     const blobSASQueryParameters = BlobService.getBlobSASQueryParameters(
+      containerName,
       blobName,
       permissions,
       expiresOnSeconds,
@@ -33,7 +35,7 @@ export class BlobService {
     return blobClient.url + '?' + blobSASQueryParameters
   }
 
-  public async listBlobFolder(directory: string): Promise<Array<ListItem>> {
+  public async listBlobFolder(containerName: string, directory: string): Promise<Array<ListItem>> {
     const key = BlobService.getKey()
     const credentials = this.getCredentials(key)
     const client = this.getClient(credentials)
@@ -74,6 +76,7 @@ export class BlobService {
   }
 
   private static getBlobSASQueryParameters(
+    containerName: string,
     blobName: string,
     permissions: string,
     expiresOnSeconds: number,

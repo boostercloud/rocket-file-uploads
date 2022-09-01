@@ -1,6 +1,5 @@
 import { Binding, FunctionDefinition } from '@boostercloud/framework-provider-azure-infrastructure'
 import { BoosterConfig } from '@boostercloud/framework-types'
-import { containerName } from '@boostercloud/rocket-file-uploads-types'
 
 export declare type BlobBinding = Binding & {
   path: string
@@ -10,7 +9,7 @@ export declare type BlobBinding = Binding & {
 export declare type BlobFunctionDefinition = FunctionDefinition<BlobBinding>
 
 export class RocketFilesFileUploadedFunction {
-  static getFunctionDefinition(config: BoosterConfig): BlobFunctionDefinition {
+  static getFunctionDefinition(config: BoosterConfig, containerName: string): BlobFunctionDefinition {
     return {
       name: 'fileupload',
       config: {
