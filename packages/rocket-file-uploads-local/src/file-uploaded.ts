@@ -1,7 +1,7 @@
 import { RocketFilesParams } from '@boostercloud/rocket-file-uploads-types'
 
 interface LocalBindingData {
-  fileName: string
+  name: string
   eventType: string
 }
 

@@ -6,5 +6,5 @@ export async function presignedPut(
   directory: string,
   fileName: string
 ): Promise<string> {
-  return `http://localhost:3000/${containerName}/${directory}/${fileName}`
+  return `${containerName}/${directory}/${fileName}`
 }

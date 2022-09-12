@@ -19,17 +19,17 @@ export class FileHandler {
 
   public presignedGet(directory: string, fileName: string): Promise<string> {
     this.checkDirectory(directory)
-    return this._provider.presignedGet(this.config, directory, fileName)
+    return this._provider.presignedGet(this.config, this._parameters.containerName, directory, fileName)
   }
 
   public presignedPut(directory: string, fileName: string): Promise<string> {
     this.checkDirectory(directory)
-    return this._provider.presignedPut(this.config, directory, fileName)
+    return this._provider.presignedPut(this.config, this._parameters.containerName, directory, fileName)
   }
 
   public list(directory: string): Promise<Array<ListItem>> {
     this.checkDirectory(directory)
-    return this._provider.list(this.config, directory)
+    return this._provider.list(this.config, this._parameters.containerName, directory)
   }
 
   private checkDirectory(directory: string): void {
