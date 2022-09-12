@@ -149,7 +149,14 @@ This returns the following payload:
 }
 ```
 
-For Local Provider, the extra parameters will not be returned
+Note: For Local Provider, the url will be simpler:
+```json
+{
+  "data": {
+    "FileUploadPut": "rocketfiles/folder01%2F3.txt"
+  }
+}
+```
 
 That can be used in a new PUT rest call replacing the `AZ_URL` with the `FileUploadPut` field from the previous response:
 
@@ -235,7 +242,15 @@ This returns the following payload:
 }
 ```
 
-For Local Provider, the extra parameters will not be returned
+NOTE: For Local Provider, the url will be simpler:
+```json
+{
+  "data": {
+    "FileUploadGet": "rocketfiles/folder01"
+  }
+}
+```
+
 
 That can be used in a new GET rest call with the `FileUploadGet` field from the previous response:
 
@@ -380,20 +395,20 @@ For Local
       {
         "id": "1",
         "metadata": {
-          "name": "3.txt"
+          "name": "folder02/1.txt"
         }
       },
       {
         "id": "2",
         "metadata": {
-          "fileName": "1.txt",
+          "name": "folder02/1.txt"
           "eventType": "rename"
         }
       },
       {
         "id": "3",
         "metadata": {
-          "name": "1.txt"
+          "name": "folder02/1.txt"
         }
       }
     ]

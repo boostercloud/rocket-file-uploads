@@ -9,7 +9,7 @@ export function fsWatch(containerName: string, directory: string): void {
   }
   fs.watch(_path, async (eventType: 'rename' | 'change', filename: string) => {
     await boosterRocketDispatcher({
-      name: filename,
+      name: path.join(directory, filename),
     })
   })
 }
