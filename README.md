@@ -19,7 +19,7 @@ These methods may be used from a Command in your project secured via JWT Token.
 
 This rocket also provides a Booster Event each time a file is uploaded.
 
-> [!NOTE] Starting at version 0.4.0 this Rocket use **Managed Identities** instead of **Connection Strings**. Please, 
+> [!NOTE] Starting at version 0.31.0 this Rocket use **Managed Identities** instead of **Connection Strings**. Please, 
 > check that you have the required permissions to assign roles https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal-managed-identity#prerequisites
 
 ## Usage
@@ -169,7 +169,7 @@ Note: For Local Provider, the url will be simpler:
 ```json
 {
   "data": {
-    "FileUploadPut": "clientst/rocketfiles/client1/myfile.txt"
+    "FileUploadPut": "http://localhost:3000/clientst/rocketfiles/client1/myfile.txt"
   }
 }
 ```
@@ -268,7 +268,7 @@ NOTE: For Local Provider, the url will be simpler:
 ```json
 {
   "data": {
-    "FileUploadGet": "clientst/rocketfiles/client1/myfile.txt"
+    "FileUploadGet": "http://localhost:3000/clientst/rocketfiles/client1/myfile.txt"
   }
 }
 ```
@@ -479,7 +479,7 @@ For Local
         {
           "id": "xxx",
           "metadata": {
-            "uri": "clientst/rocketfiles/client1/myfile.txt",
+            "uri": "http://localhost:3000/clientst/rocketfiles/client1/myfile.txt",
             "name": "client1/myfile.txt"
           }
         }
@@ -594,7 +594,7 @@ On Local, the event will be:
   "value": {
     "id": "x",
     "metadata": {
-      "uri": "clientst/rocketfiles/client1/myfile.txt",
+      "uri": "http://localhost:3000/clientst/rocketfiles/client1/myfile.txt",
       "name": "client1/myfile.txt"
     }
   },
