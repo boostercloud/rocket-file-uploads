@@ -1,9 +1,9 @@
 import { InfrastructureRocket } from '@boostercloud/framework-provider-local-infrastructure'
 import { Infra } from './infra'
-import { RocketFilesParams } from '@boostercloud/rocket-file-uploads-types'
+import { RocketFilesConfiguration } from '@boostercloud/rocket-file-uploads-types'
 
-const AzureRocketFiles = (params: RocketFilesParams): InfrastructureRocket => ({
-  mountStack: Infra.mountStack.bind(Infra, params),
+const AzureRocketFiles = (configuration: RocketFilesConfiguration): InfrastructureRocket => ({
+  mountStack: Infra.mountStack.bind(Infra, configuration),
 })
 
 export default AzureRocketFiles

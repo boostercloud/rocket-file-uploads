@@ -61,45 +61,24 @@ In your Booster config file, configure your `BoosterRocketFiles`:
 import { Booster } from '@boostercloud/framework-core'
 import { BoosterConfig } from '@boostercloud/framework-types'
 import { BoosterRocketFiles } from '@boostercloud/rocket-file-uploads-core'
-import { RocketFilesParams, RocketProviderPackageType } from '@boostercloud/rocket-file-uploads-types'
+import { RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-types'
 
-const directories = [
-  {
-    directory: 'folder01',
-  },
-  {
-    directory: 'folder02',
-  },
-]
-
-const azureRocketProviderPackage = '@boostercloud/rocket-file-uploads-azure' as RocketProviderPackageType
-const localRocketProviderPackage = '@boostercloud/rocket-file-uploads-local' as RocketProviderPackageType
-
-const exampleAzureParameters = {
-  rocketProviderPackage: azureRocketProviderPackage,
-  params: directories,
-} as RocketFilesParams
-
-const exampleLocalParameters = {
-  rocketProviderPackage: localRocketProviderPackage,
-  params: directories,
-} as RocketFilesParams
+const configuration: RocketFilesUserConfiguration = {
+  containerName: 'test',
+  directories: ['folder01', 'folder02'],
+}
 
 Booster.configure('production', (config: BoosterConfig): void => {
   config.appName = 'test-rockets-files'
   config.providerPackage = '@boostercloud/framework-provider-azure'
-  config.rockets = [buildRocket(config, exampleAzureParameters).rocketForAzure()]
+  config.rockets = [new BoosterRocketFiles().rocketForAzure(config, configuration)]
 })
 
 Booster.configure('local', (config: BoosterConfig): void => {
   config.appName = 'test-rockets-files'
   config.providerPackage = '@boostercloud/framework-provider-local'
-  config.rockets = [buildRocket(config, exampleLocalParameters).rocketForLocal()]
+  config.rockets = [new BoosterRocketFiles().rocketForLocal(config, configuration)]
 })
-
-function buildRocket(config: BoosterConfig, params: RocketFilesParams): BoosterRocketFiles {
-  return new BoosterRocketFiles(config, params)
-}
 ```
 
 Available parameters are:
@@ -111,8 +90,8 @@ Available parameters are:
 
 Create a command in your application and call the `presignedPut` method on the FileHandler class with the `directory` and `filename` you want to upload.
 
-```javascript
-import { Booster, Command, Returns } from '@boostercloud/framework-core'
+```typescript
+import { Booster, Command } from '@boostercloud/framework-core'
 import { Register } from '@boostercloud/framework-types'
 import { FileHandler } from '@boostercloud/rocket-file-uploads-core'
 
@@ -122,13 +101,14 @@ import { FileHandler } from '@boostercloud/rocket-file-uploads-core'
 export class FileUploadPut {
   public constructor(readonly directory: string, readonly fileName: string) {}
 
-  @Returns(String)
-  public static async handle(command: FileUploadPut, register: Register): Promise<string> {
-    const boosterConfig = Booster.config
-    const fileHandler = new FileHandler(boosterConfig)
-    return await fileHandler.presignedPut(command.directory, command.fileName)
-  }
+public static async handle(command: FileUploadPut, register: Register): Promise<string> {
+  const boosterConfig = Booster.config
+  const fileHandler = new FileHandler(boosterConfig)
+  return await fileHandler.presignedPut(command.directory, command.fileName)
 }
+
+}
+
 ```
 
 Mutation example:
@@ -196,16 +176,14 @@ curl -v -X PUT \
 "${AZ_URL}"
 ```
 
-Local Provider will write files on `./rocketfiles` folder
-
 **Note**: Azure will return a 201 status but Local will return a 200
 
 ### PresignedGet Usage
 
 Create a command in your application and call the `presignedGet` method on the FileHandler class with the `directory` and `filename` you want to get.
 
-```javascript
-import { Booster, Command, Returns } from '@boostercloud/framework-core'
+```typescript
+import { Booster, Command } from '@boostercloud/framework-core'
 import { Register } from '@boostercloud/framework-types'
 import { FileHandler } from '@boostercloud/rocket-file-uploads-core'
 
@@ -215,7 +193,6 @@ import { FileHandler } from '@boostercloud/rocket-file-uploads-core'
 export class FileUploadGet {
   public constructor(readonly directory: string, readonly fileName: string) {}
 
-@Returns(String)
 public static async handle(command: FileUploadGet, register: Register): Promise<string> {
   const boosterConfig = Booster.config
   const fileHandler = new FileHandler(boosterConfig)
@@ -262,8 +239,8 @@ curl --request GET '<FileUploadGet>'
 
 Create a command in your application and call the `list` method on the FileHandler class with the `directory` you want to get the info and return the formatted results
 
-```javascript
-import { Booster, Command, Returns } from '@boostercloud/framework-core'
+```typescript
+import { Booster, Command } from '@boostercloud/framework-core'
 import { Register } from '@boostercloud/framework-types'
 import { FileHandler } from '@boostercloud/rocket-file-uploads-core'
 import { ListItem } from '@boostercloud/rocket-file-uploads-types'
@@ -274,12 +251,10 @@ import { ListItem } from '@boostercloud/rocket-file-uploads-types'
 export class FileUploadList {
   public constructor(readonly directory: string) {}
 
-@Returns(String)
-public static async handle(command: FileUploadList, register: Register): Promise<string> {
+public static async handle(command: FileUploadList, register: Register): Promise<Array<ListItem>> {
   const boosterConfig = Booster.config
   const fileHandler = new FileHandler(boosterConfig)
-  const listItems = await fileHandler.list(command.directory) // todo Booster Returns support for Array<Type>
-  return '[' + listItems.map((item: ListItem) => JSON.stringify(item)).join(',') + ']'
+  return await fileHandler.list(command.directory)
 }
 }
 ```
@@ -308,24 +283,24 @@ Local Provider only return `lastModified` property for each file
 
 Create a Booster ReadModel to provide a view of the files uploaded to a directory
 
-```javascript
+```typescript
 import { Projects, ReadModel } from '@boostercloud/framework-core'
 import { ProjectionResult } from '@boostercloud/framework-types'
 import { UploadedFileEntity } from '@boostercloud/rocket-file-uploads-types'
 
 @ReadModel({
-  authorize: 'all', // Specify authorized roles here. Use 'all' to authorize anyone
+  authorize: 'all',
 })
 export class UploadedFileEntityReadModel {
   public constructor(public id: string, readonly metadata: unknown) {}
 
-  @Projects(UploadedFileEntity, 'id')
-  public static projectUploadedFileEntity(
-    entity: UploadedFileEntity,
-    currentUploadedFileEntityReadModel?: UploadedFileEntityReadModel
-  ): ProjectionResult<UploadedFileEntity> {
-    return new UploadedFileEntityReadModel(entity.id, entity.metadata)
-  }
+@Projects(UploadedFileEntity, 'id')
+public static projectUploadedFileEntity(
+  entity: UploadedFileEntity,
+  currentUploadedFileEntityReadModel?: UploadedFileEntityReadModel
+): ProjectionResult<UploadedFileEntity> {
+  return new UploadedFileEntityReadModel(entity.id, entity.metadata)
+}
 }
 ```
 
@@ -468,7 +443,7 @@ On Azure the event will be like this:
         }
     },
     "createdAt": "2022-01-22T19:21:04.220Z",
-    "snapshottedEventCreatedAt": "2022-01-22T19:21:02.201Z",
+    "snapshottedEventCreatedAt": "2022-01-22T19:21:02.201Z"
 }
 ```
 

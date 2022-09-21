@@ -1,7 +1,7 @@
 import { BoosterConfig, EventEnvelope, UUID } from '@boostercloud/framework-types'
 import {
   RocketFilesBlobUploaded,
-  RocketFilesParams,
+  RocketFilesConfiguration,
   UploadedFileEntity,
   UploadedFileEvent,
 } from '@boostercloud/rocket-file-uploads-types'
@@ -9,7 +9,7 @@ import {
 export async function fileUploaded(
   config: BoosterConfig,
   request: unknown,
-  params: RocketFilesParams
+  params: RocketFilesConfiguration
 ): Promise<unknown> {
   const provider = require(params.rocketProviderPackage)
   const metadata = provider.getMetadataFromRequest(request)

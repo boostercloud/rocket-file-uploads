@@ -1,14 +1,14 @@
-import { RocketFilesParam, RocketFilesParams } from '@boostercloud/rocket-file-uploads-types'
+import { RocketFilesConfiguration } from '@boostercloud/rocket-file-uploads-types'
 import { Context, ContextBindingData } from '@azure/functions'
 
 export function getMetadataFromRequest(request: unknown): ContextBindingData {
   return (request as Context).bindingData
 }
 
-export function validateMetadata(params: RocketFilesParams, metadata: ContextBindingData): boolean {
+export function validateMetadata(configuration: RocketFilesConfiguration, metadata: ContextBindingData): boolean {
   const blobTrigger = metadata.blobTrigger as string
-  const directoryFound = params.params.find((p: RocketFilesParam) =>
-    blobTrigger.startsWith(`${params.containerName}/${p.directory}`)
+  const directoryFound = configuration.directories.find((directory: string) =>
+    blobTrigger.startsWith(`${configuration.containerName}/${directory}`)
   )
 
   if (!directoryFound) {

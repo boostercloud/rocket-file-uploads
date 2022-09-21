@@ -1,12 +1,12 @@
 import { InfrastructureRocket } from '@boostercloud/framework-provider-azure-infrastructure'
 import { Synth } from './synth/synth'
 import { Functions } from './functions/functions'
-import { RocketFilesParams } from '@boostercloud/rocket-file-uploads-types'
+import { RocketFilesConfiguration } from '@boostercloud/rocket-file-uploads-types'
 
-const AzureRocketFiles = (params: RocketFilesParams): InfrastructureRocket => ({
-  mountStack: Synth.mountStack.bind(Synth, params),
-  mountFunctions: Functions.mountFunctions.bind(Synth, params),
-  getFunctionAppName: Functions.getFunctionAppName.bind(Synth, params),
+const AzureRocketFiles = (configuration: RocketFilesConfiguration): InfrastructureRocket => ({
+  mountStack: Synth.mountStack.bind(Synth, configuration),
+  mountFunctions: Functions.mountFunctions.bind(Synth, configuration),
+  getFunctionAppName: Functions.getFunctionAppName.bind(Synth, configuration),
 })
 
 export default AzureRocketFiles
