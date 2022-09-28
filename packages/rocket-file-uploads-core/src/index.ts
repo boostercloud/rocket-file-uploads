@@ -10,32 +10,34 @@ import { fileUploaded } from './file-uploaded'
 export { FileHandler } from './file-handler'
 
 export class BoosterRocketFiles {
-  public rocketForAzure(config: BoosterConfig, userConfiguration: RocketFilesUserConfiguration): RocketDescriptor {
+  constructor(readonly config: BoosterConfig, readonly userConfiguration: RocketFilesUserConfiguration) {}
+
+  public rocketForAzure(): RocketDescriptor {
     const configuration = BoosterRocketFiles.buildParameters(
-      userConfiguration,
+      this.userConfiguration,
       '@boostercloud/rocket-file-uploads-azure'
     )
-    this.register(config, configuration)
+    this.register(configuration)
     return {
       packageName: '@boostercloud/rocket-file-uploads-azure-infrastructure',
       parameters: configuration,
     }
   }
 
-  public rocketForLocal(config: BoosterConfig, userConfiguration: RocketFilesUserConfiguration): RocketDescriptor {
+  public rocketForLocal(): RocketDescriptor {
     const configuration = BoosterRocketFiles.buildParameters(
-      userConfiguration,
+      this.userConfiguration,
       '@boostercloud/rocket-file-uploads-local'
     )
-    this.register(config, configuration)
+    this.register(configuration)
     return {
       packageName: '@boostercloud/rocket-file-uploads-local-infrastructure',
       parameters: configuration,
     }
   }
 
-  private register(config: BoosterConfig, configuration: RocketFilesConfiguration): void {
-    config.registerRocketFunction(functionID, async (config: BoosterConfig, request: unknown) => {
+  private register(configuration: RocketFilesConfiguration): void {
+    this.config.registerRocketFunction(functionID, async (config: BoosterConfig, request: unknown) => {
       return fileUploaded(config, request, configuration)
     })
   }

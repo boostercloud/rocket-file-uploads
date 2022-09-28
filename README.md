@@ -71,20 +71,20 @@ const configuration: RocketFilesUserConfiguration = {
 Booster.configure('production', (config: BoosterConfig): void => {
   config.appName = 'test-rockets-files'
   config.providerPackage = '@boostercloud/framework-provider-azure'
-  config.rockets = [new BoosterRocketFiles().rocketForAzure(config, configuration)]
+  config.rockets = [new BoosterRocketFiles(config, configuration).rocketForAzure()]
 })
 
 Booster.configure('local', (config: BoosterConfig): void => {
   config.appName = 'test-rockets-files'
   config.providerPackage = '@boostercloud/framework-provider-local'
-  config.rockets = [new BoosterRocketFiles().rocketForLocal(config, configuration)]
+  config.rockets = [new BoosterRocketFiles(config, configuration).rocketForLocal()]
 })
 ```
 
 Available parameters are:
 
-- `rocketProviderPackage` Rocket package that handle your infrastructure.
-- `params[directory]` A list of folders
+- `directories` A list of folders where the files will be stored
+- `containerName`: Directories container
 
 ### PresignedPut Usage
 
