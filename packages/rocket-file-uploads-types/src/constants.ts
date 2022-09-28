@@ -1,2 +1,8 @@
-export const storageName = (applicationName: string, environmentName: string): string =>
-  `${applicationName}rf${environmentName}`.replace(/([-_])/gi, '').substr(0, 24)
+export function azureStorageName(
+  applicationName: string,
+  environmentName: string,
+  storageAccountNameParameter?: string
+): string {
+  const defaultAccountName = `${applicationName}rf${environmentName}`.replace(/([-_])/gi, '').substring(0, 24)
+  return storageAccountNameParameter || defaultAccountName
+}

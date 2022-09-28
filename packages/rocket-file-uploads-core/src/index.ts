@@ -1,6 +1,7 @@
 import { BoosterConfig, RocketDescriptor } from '@boostercloud/framework-types'
 import {
   functionID,
+  RocketFilesAzureInfraParameters,
   RocketFilesConfiguration,
   RocketFilesUserConfiguration,
   RocketProviderPackageType,
@@ -12,11 +13,12 @@ export { FileHandler } from './file-handler'
 export class BoosterRocketFiles {
   constructor(readonly config: BoosterConfig, readonly userConfiguration: RocketFilesUserConfiguration) {}
 
-  public rocketForAzure(): RocketDescriptor {
+  public rocketForAzure(azureInfraParameters?: RocketFilesAzureInfraParameters): RocketDescriptor {
     const configuration = BoosterRocketFiles.buildParameters(
       this.userConfiguration,
       '@boostercloud/rocket-file-uploads-azure'
     )
+    configuration.azureInfra = azureInfraParameters
     this.register(configuration)
     return {
       packageName: '@boostercloud/rocket-file-uploads-azure-infrastructure',

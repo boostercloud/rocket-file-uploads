@@ -1,8 +1,8 @@
 import { TerraformStack } from 'cdktf'
 import { ResourceGroup, StorageAccount } from '@cdktf/provider-azurerm'
 import { RocketUtils } from '@boostercloud/framework-provider-azure-infrastructure'
-import { storageName } from '@boostercloud/rocket-file-uploads-types'
 import { BoosterConfig } from '@boostercloud/framework-types'
+import { azureStorageName } from '@boostercloud/rocket-file-uploads-types'
 
 export class TerraformStorageAccount {
   static build(
@@ -10,11 +10,13 @@ export class TerraformStorageAccount {
     resourceGroup: ResourceGroup,
     appPrefix: string,
     utils: RocketUtils,
-    config: BoosterConfig
+    config: BoosterConfig,
+    storageAccountNameParameter?: string
   ): StorageAccount {
     const id = utils.toTerraformName(appPrefix, 'rfst')
+    const storageAccountName = azureStorageName(config.appName, config.environmentName, storageAccountNameParameter)
     return new StorageAccount(terraformStack, id, {
-      name: storageName(config.appName, config.environmentName),
+      name: storageAccountName,
       resourceGroupName: resourceGroup.name,
       location: resourceGroup.location,
       accountReplicationType: 'LRS',

@@ -4,31 +4,31 @@ import { ListItem, RocketFilesConfiguration, RocketFilesProviderLibrary } from '
 export class FileHandler {
   private _provider: RocketFilesProviderLibrary
   private _rocket: RocketDescriptor
-  private _configuration: RocketFilesConfiguration
+  private _rocketFilesConfiguration: RocketFilesConfiguration
 
   constructor(readonly config: BoosterConfig) {
     this._rocket = FileHandler.getRocketFromConfiguration(config)
-    this._configuration = this._rocket.parameters as RocketFilesConfiguration
-    this._provider = require(this._configuration.rocketProviderPackage)
+    this._rocketFilesConfiguration = this._rocket.parameters as RocketFilesConfiguration
+    this._provider = require(this._rocketFilesConfiguration.rocketProviderPackage)
   }
 
   public presignedGet(directory: string, fileName: string): Promise<string> {
     this.checkDirectory(directory)
-    return this._provider.presignedGet(this.config, this._configuration.containerName, directory, fileName)
+    return this._provider.presignedGet(this.config, this._rocketFilesConfiguration, directory, fileName)
   }
 
   public presignedPut(directory: string, fileName: string): Promise<string> {
     this.checkDirectory(directory)
-    return this._provider.presignedPut(this.config, this._configuration.containerName, directory, fileName)
+    return this._provider.presignedPut(this.config, this._rocketFilesConfiguration, directory, fileName)
   }
 
   public list(directory: string): Promise<Array<ListItem>> {
     this.checkDirectory(directory)
-    return this._provider.list(this.config, this._configuration.containerName, directory)
+    return this._provider.list(this.config, this._rocketFilesConfiguration, directory)
   }
 
   private checkDirectory(directory: string): void {
-    if (!this._configuration.directories.includes(directory)) {
+    if (!this._rocketFilesConfiguration.directories.includes(directory)) {
       throw new Error(`Invalid directory ${directory}`)
     }
   }

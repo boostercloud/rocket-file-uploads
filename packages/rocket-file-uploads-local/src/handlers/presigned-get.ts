@@ -1,10 +1,11 @@
 import { BoosterConfig } from '@boostercloud/framework-types'
+import { RocketFilesConfiguration } from '@boostercloud/rocket-file-uploads-types'
 
 export async function presignedGet(
-  config: BoosterConfig,
-  containerName: string,
+  _config: BoosterConfig,
+  rocketFilesConfiguration: RocketFilesConfiguration,
   directory: string,
   fileName: string
 ): Promise<string> {
-  return `${containerName}/${directory}/${fileName}`
+  return `${rocketFilesConfiguration.containerName}/${directory}/${fileName}`
 }
