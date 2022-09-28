@@ -86,6 +86,16 @@ Available parameters are:
 - `directories` A list of folders where the files will be stored
 - `containerName`: Directories container
 
+For Azure provider you can configure the storage account name. You need to set the `storageAccountName` in the `rocketForAzure` method.
+
+```typescript
+  config.rockets = [
+    new BoosterRocketFiles(config, rocketFilesConfiguration).rocketForAzure({
+      storageAccountName: 'myproject123456',
+    }),
+  ]
+```
+
 ### PresignedPut Usage
 
 Create a command in your application and call the `presignedPut` method on the FileHandler class with the `directory` and `filename` you want to upload.
