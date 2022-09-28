@@ -17,7 +17,14 @@ export class Synth {
     const resourceGroup = applicationSynthStack.resourceGroup!
     const rocketStack = applicationSynthStack.rocketStack ?? []
 
-    const rocketStorage = TerraformStorageAccount.build(terraformStack, resourceGroup, appPrefix, utils, config)
+    const rocketStorage = TerraformStorageAccount.build(
+      terraformStack,
+      resourceGroup,
+      appPrefix,
+      utils,
+      config,
+      configuration.azureInfra?.storageAccountName
+    )
 
     applicationSynthStack.functionApp!.addOverride('app_settings', {
       ROCKET_STORAGE_KEY: `${rocketStorage.primaryAccessKey}`,
