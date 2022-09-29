@@ -1,13 +1,16 @@
 import { BoosterConfig } from '@boostercloud/framework-types'
 import { BlobService } from './blob-service'
-import { storageName } from '@boostercloud/rocket-file-uploads-types'
+import { RocketFilesConfiguration } from '@boostercloud/rocket-file-uploads-types'
 
 export async function presignedGet(
   config: BoosterConfig,
-  containerName: string,
+  rocketFilesConfiguration: RocketFilesConfiguration,
   directory: string,
   fileName: string
 ): Promise<string> {
-  const storageAccount = storageName(config.appName, config.environmentName)
-  return new BlobService(storageAccount).getBlobSasUrl(containerName, directory, fileName)
+  return new BlobService(config, rocketFilesConfiguration).getBlobSasUrl(
+    rocketFilesConfiguration.containerName,
+    directory,
+    fileName
+  )
 }

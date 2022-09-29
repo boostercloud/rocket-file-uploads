@@ -1,5 +1,6 @@
 import * as storage from '@azure/storage-blob'
-import { ListItem } from '@boostercloud/rocket-file-uploads-types'
+import { azureStorageName, ListItem, RocketFilesConfiguration } from '@boostercloud/rocket-file-uploads-types'
+import { BoosterConfig } from '@boostercloud/framework-types'
 
 /**
  * Write SasUrl requires `Storage Blob Data Contributor` role.
@@ -9,8 +10,16 @@ export class BlobService {
   private readonly DEFAULT_PERMISSIONS = 'r'
   private readonly DEFAULT_EXPIRES_ON_SECONDS = 86400
   private readonly STORAGE_ACCOUNT_ENDPOINT = 'blob.core.windows.net'
+  private readonly storageAccount: string
 
-  constructor(readonly storageAccount: string) {}
+  constructor(readonly configuration: BoosterConfig, readonly rocketFilesConfiguration: RocketFilesConfiguration) {
+    const storageAccountNameParameter = rocketFilesConfiguration.azureInfra?.storageAccountName
+    this.storageAccount = azureStorageName(
+      configuration.appName,
+      configuration.environmentName,
+      storageAccountNameParameter
+    )
+  }
 
   public getBlobSasUrl(
     containerName: string,
