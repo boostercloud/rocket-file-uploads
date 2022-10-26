@@ -13,7 +13,7 @@ export class TerraformStorageAccount {
     config: BoosterConfig,
     storageAccountNameParameter?: string
   ): StorageAccount {
-    const id = utils.toTerraformName(appPrefix, 'rfst')
+    const id = utils.toTerraformName(appPrefix, `${storageAccountNameParameter}rfst`)
     const storageAccountName = azureStorageName(config.appName, config.environmentName, storageAccountNameParameter)
     return new StorageAccount(terraformStack, id, {
       name: storageAccountName,

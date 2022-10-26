@@ -1,6 +1,8 @@
 import * as storage from '@azure/storage-blob'
-import { azureStorageName, ListItem, RocketFilesConfiguration } from '@boostercloud/rocket-file-uploads-types'
+import { azureStorageName, ListItem, RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-types'
 import { BoosterConfig } from '@boostercloud/framework-types'
+import { DefaultAzureCredential } from '@azure/identity'
+import { BlobSASSignatureValues } from '@azure/storage-blob'
 
 /**
  * Write SasUrl requires `Storage Blob Data Contributor` role.
@@ -11,44 +13,45 @@ export class BlobService {
   private readonly DEFAULT_EXPIRES_ON_SECONDS = 86400
   private readonly STORAGE_ACCOUNT_ENDPOINT = 'blob.core.windows.net'
   private readonly storageAccount: string
+  private readonly blobServiceClient: storage.BlobServiceClient
 
-  constructor(readonly configuration: BoosterConfig, readonly rocketFilesConfiguration: RocketFilesConfiguration) {
-    const storageAccountNameParameter = rocketFilesConfiguration.azureInfra?.storageAccountName
+  constructor(
+    readonly configuration: BoosterConfig,
+    readonly rocketFilesUserConfiguration: RocketFilesUserConfiguration
+  ) {
+    const storageAccountNameParameter = rocketFilesUserConfiguration.storageName
     this.storageAccount = azureStorageName(
       configuration.appName,
       configuration.environmentName,
       storageAccountNameParameter
     )
+
+    this.blobServiceClient = new storage.BlobServiceClient(
+      `https://${this.storageAccount}.${this.STORAGE_ACCOUNT_ENDPOINT}`,
+      new DefaultAzureCredential()
+    )
   }
 
-  public getBlobSasUrl(
+  public async getBlobSasUrl(
     containerName: string,
     directory: string,
     fileName: string,
     permissions = this.DEFAULT_PERMISSIONS,
     expiresOnSeconds = this.DEFAULT_EXPIRES_ON_SECONDS
-  ): string {
-    const key = BlobService.getKey()
-    const blobName = BlobService.getBlobName(directory, fileName)
-    const credentials = this.getCredentials(key)
-    const client = this.getClient(credentials)
-    const blobSASQueryParameters = BlobService.getBlobSASQueryParameters(
+  ): Promise<string> {
+    const filePath = `${directory}/${fileName}`
+    const blobSASQueryParameters = await this.getBlobSASQueryParameters(
       containerName,
-      blobName,
+      filePath,
       permissions,
-      expiresOnSeconds,
-      credentials
+      expiresOnSeconds
     )
-    const containerClient = client.getContainerClient(containerName)
-    const blobClient = containerClient.getBlobClient(blobName)
-    return blobClient.url + '?' + blobSASQueryParameters
+
+    return `${this.blobServiceClient.url}${containerName}/${filePath}?${blobSASQueryParameters}`
   }
 
   public async listBlobFolder(containerName: string, directory: string): Promise<Array<ListItem>> {
-    const key = BlobService.getKey()
-    const credentials = this.getCredentials(key)
-    const client = this.getClient(credentials)
-    const containerClient = client.getContainerClient(containerName)
+    const containerClient = this.blobServiceClient.getContainerClient(containerName)
     const result = []
     for await (const blob of containerClient.listBlobsFlat({ prefix: directory, includeMetadata: true })) {
       const item = {
@@ -66,42 +69,26 @@ export class BlobService {
     return result
   }
 
-  private getClient(sharedKeyCredential: storage.StorageSharedKeyCredential): storage.BlobServiceClient {
-    return new storage.BlobServiceClient(
-      `https://${this.storageAccount}.${this.STORAGE_ACCOUNT_ENDPOINT}`,
-      sharedKeyCredential
-    )
-  }
-
-  private getCredentials(key: string): storage.StorageSharedKeyCredential {
-    return new storage.StorageSharedKeyCredential(this.storageAccount, key)
-  }
-
-  private static getKey(): string {
-    return process.env['ROCKET_STORAGE_KEY'] ?? ''
-  }
-  private static getBlobName(directory: string, fileName: string): string {
-    return `${directory}/${fileName}`
-  }
-
-  private static getBlobSASQueryParameters(
+  private async getBlobSASQueryParameters(
     containerName: string,
     blobName: string,
     permissions: string,
-    expiresOnSeconds: number,
-    sharedKeyCredential: storage.StorageSharedKeyCredential
-  ): string {
-    return storage
-      .generateBlobSASQueryParameters(
-        {
-          containerName,
-          blobName,
-          permissions: storage.BlobSASPermissions.parse(permissions),
-          startsOn: new Date(),
-          expiresOn: new Date(new Date().valueOf() + expiresOnSeconds),
-        },
-        sharedKeyCredential
-      )
-      .toString()
+    expiresOnSeconds: number
+  ): Promise<string> {
+    const startsOn = new Date()
+    const expiresOn = new Date(new Date().valueOf() + expiresOnSeconds)
+    const userDelegationKey = await this.blobServiceClient.getUserDelegationKey(startsOn, expiresOn)
+
+    const sasOptions: BlobSASSignatureValues = {
+      containerName,
+      blobName,
+      permissions: storage.BlobSASPermissions.parse(permissions),
+      protocol: storage.SASProtocol.HttpsAndHttp,
+      startsOn: startsOn,
+      expiresOn: expiresOn,
+      version: '2018-11-09',
+    }
+
+    return storage.generateBlobSASQueryParameters(sasOptions, userDelegationKey, this.storageAccount).toString()
   }
 }

@@ -14,10 +14,10 @@ export class FileController {
   public router: express.Router = express.Router()
   private readonly _path
 
-  constructor(readonly containerName: string, readonly directory: string) {
+  constructor(readonly storageAccountName: string, readonly containerName: string, readonly directory: string) {
     this.router.put(`/${directory}/:fileName`, this.uploadFile.bind(this))
     this.router.get(`/${directory}/:fileName`, this.getFile.bind(this))
-    this._path = path.join(process.cwd(), this.containerName, this.directory)
+    this._path = path.join(process.cwd(), this.storageAccountName, this.containerName, this.directory)
   }
 
   public async getFile(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {

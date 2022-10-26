@@ -1,28 +1,29 @@
 import { BoosterConfig, EventEnvelope, UUID } from '@boostercloud/framework-types'
 import {
   RocketFilesBlobUploaded,
-  RocketFilesConfiguration,
   UploadedFileEntity,
   UploadedFileEvent,
+  RocketFilesUserConfiguration,
+  RocketFileUploadedLibrary,
 } from '@boostercloud/rocket-file-uploads-types'
 
 export async function fileUploaded(
-  config: BoosterConfig,
+  boosterConfig: BoosterConfig,
   request: unknown,
-  params: RocketFilesConfiguration
+  rocketFilesUserConfiguration: RocketFilesUserConfiguration,
+  provider: RocketFileUploadedLibrary
 ): Promise<unknown> {
-  const provider = require(params.rocketProviderPackage)
   const metadata = provider.getMetadataFromRequest(request)
-  if (provider.validateMetadata(params, metadata)) {
-    return processEvent(config, metadata)
+  if (provider.validateMetadata(rocketFilesUserConfiguration, metadata)) {
+    return processEvent(boosterConfig, metadata)
   }
   return Promise.resolve()
 }
 
-async function processEvent(config: BoosterConfig, metadata: unknown): Promise<void> {
+async function processEvent(boosterConfig: BoosterConfig, metadata: unknown): Promise<void> {
   try {
     const envelop = toEventEnvelop(metadata)
-    await config.provider.events.store([envelop], config)
+    await boosterConfig.provider.events.store([envelop], boosterConfig)
   } catch (e) {
     console.log('[ROCKET#files] An error occurred while performing a PutItem operation: ', e)
   }

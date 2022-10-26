@@ -1,7 +1,6 @@
 import { BoosterConfig, RocketDescriptor } from '@boostercloud/framework-types'
 import {
   functionID,
-  RocketFilesAzureInfraParameters,
   RocketFilesConfiguration,
   RocketFilesUserConfiguration,
   RocketProviderPackageType,
@@ -11,14 +10,16 @@ import { fileUploaded } from './file-uploaded'
 export { FileHandler } from './file-handler'
 
 export class BoosterRocketFiles {
-  constructor(readonly config: BoosterConfig, readonly userConfiguration: RocketFilesUserConfiguration) {}
+  constructor(
+    readonly config: BoosterConfig,
+    readonly userConfiguration: RocketFilesUserConfiguration | Array<RocketFilesUserConfiguration>
+  ) {}
 
-  public rocketForAzure(azureInfraParameters?: RocketFilesAzureInfraParameters): RocketDescriptor {
+  public rocketForAzure(): RocketDescriptor {
     const configuration = BoosterRocketFiles.buildParameters(
       this.userConfiguration,
       '@boostercloud/rocket-file-uploads-azure'
     )
-    configuration.azureInfra = azureInfraParameters
     this.register(configuration)
     return {
       packageName: '@boostercloud/rocket-file-uploads-azure-infrastructure',
@@ -39,15 +40,31 @@ export class BoosterRocketFiles {
   }
 
   private register(configuration: RocketFilesConfiguration): void {
-    this.config.registerRocketFunction(functionID, async (config: BoosterConfig, request: unknown) => {
-      return fileUploaded(config, request, configuration)
+    const provider = require(configuration.rocketProviderPackage)
+    this.config.registerRocketFunction(functionID, async (boosterConfig: BoosterConfig, request: unknown) => {
+      configuration.userConfiguration.forEach((userConf) => {
+        return fileUploaded(boosterConfig, request, userConf, provider)
+      })
     })
   }
 
   private static buildParameters(
-    userConfiguration: RocketFilesUserConfiguration,
+    userConfiguration: RocketFilesUserConfiguration | Array<RocketFilesUserConfiguration>,
     rocketProviderPackage: RocketProviderPackageType
   ): RocketFilesConfiguration {
-    return { ...userConfiguration, rocketProviderPackage: rocketProviderPackage }
+    if (Array.isArray(userConfiguration)) {
+      userConfiguration.forEach((config) => {
+        config.storageName = config.storageName.toLowerCase()
+      })
+      return {
+        userConfiguration: userConfiguration,
+        rocketProviderPackage: rocketProviderPackage,
+      }
+    }
+    userConfiguration.storageName = userConfiguration.storageName.toLowerCase()
+    return {
+      userConfiguration: [userConfiguration],
+      rocketProviderPackage: rocketProviderPackage,
+    }
   }
 }

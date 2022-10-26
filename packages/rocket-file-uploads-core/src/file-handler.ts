@@ -1,34 +1,42 @@
 import { BoosterConfig, RocketDescriptor } from '@boostercloud/framework-types'
-import { ListItem, RocketFilesConfiguration, RocketFilesProviderLibrary } from '@boostercloud/rocket-file-uploads-types'
+import {
+  getUserConfiguration,
+  ListItem,
+  RocketFilesConfiguration,
+  RocketFilesProviderLibrary,
+  RocketFilesUserConfiguration,
+} from '@boostercloud/rocket-file-uploads-types'
 
 export class FileHandler {
   private _provider: RocketFilesProviderLibrary
   private _rocket: RocketDescriptor
   private _rocketFilesConfiguration: RocketFilesConfiguration
+  private _userConfiguration: RocketFilesUserConfiguration
 
-  constructor(readonly config: BoosterConfig) {
+  constructor(readonly config: BoosterConfig, storageName?: string) {
     this._rocket = FileHandler.getRocketFromConfiguration(config)
     this._rocketFilesConfiguration = this._rocket.parameters as RocketFilesConfiguration
     this._provider = require(this._rocketFilesConfiguration.rocketProviderPackage)
+    this._userConfiguration = getUserConfiguration(this._rocketFilesConfiguration, storageName)
   }
 
   public presignedGet(directory: string, fileName: string): Promise<string> {
     this.checkDirectory(directory)
-    return this._provider.presignedGet(this.config, this._rocketFilesConfiguration, directory, fileName)
+    return this._provider.presignedGet(this.config, this._userConfiguration, directory, fileName)
   }
 
   public presignedPut(directory: string, fileName: string): Promise<string> {
     this.checkDirectory(directory)
-    return this._provider.presignedPut(this.config, this._rocketFilesConfiguration, directory, fileName)
+    return this._provider.presignedPut(this.config, this._userConfiguration, directory, fileName)
   }
 
   public list(directory: string): Promise<Array<ListItem>> {
     this.checkDirectory(directory)
-    return this._provider.list(this.config, this._rocketFilesConfiguration, directory)
+    return this._provider.list(this.config, this._userConfiguration, directory)
   }
 
   private checkDirectory(directory: string): void {
-    if (!this._rocketFilesConfiguration.directories.includes(directory)) {
+    if (!this._userConfiguration.directories.includes(directory)) {
       throw new Error(`Invalid directory ${directory}`)
     }
   }
