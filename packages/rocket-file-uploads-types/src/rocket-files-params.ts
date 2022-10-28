@@ -22,6 +22,9 @@ export function getUserConfiguration(
   if (rocketFilesConfiguration.userConfiguration.length === 0) {
     throw new Error('Missing userConfiguration')
   }
+  if (!storageAccountName && rocketFilesConfiguration.userConfiguration.length > 1) {
+    throw new Error('Missing storageAccountName')
+  }
   if (!storageAccountName) {
     return rocketFilesConfiguration.userConfiguration[0]
   }
