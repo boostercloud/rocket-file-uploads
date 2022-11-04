@@ -5,11 +5,20 @@ import { FileController } from './controllers/file-controller'
 import { fsWatch } from './fs-watch'
 
 export class Infra {
-  public static mountStack(params: RocketFilesConfiguration, config: BoosterConfig, router: Router): void {
+  public static mountStack(
+    rocketFilesConfiguration: RocketFilesConfiguration,
+    config: BoosterConfig,
+    router: Router
+  ): void {
     process.env[rocketFunctionIDEnvVar] = functionID
-    params.directories.forEach((directory: string) => {
-      router.use(`/${params.containerName}`, new FileController(params.containerName, directory).router)
-      fsWatch(params.containerName, directory)
+    rocketFilesConfiguration.userConfiguration.forEach((userConfiguration) => {
+      userConfiguration.directories.forEach((directory: string) => {
+        router.use(
+          `/${userConfiguration.storageName}/${userConfiguration.containerName}`,
+          new FileController(userConfiguration.storageName, userConfiguration.containerName, directory).router
+        )
+        fsWatch(userConfiguration.storageName, userConfiguration.containerName, directory)
+      })
     })
   }
 }

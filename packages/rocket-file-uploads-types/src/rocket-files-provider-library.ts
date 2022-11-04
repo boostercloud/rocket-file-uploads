@@ -1,23 +1,23 @@
 import { BoosterConfig } from '@boostercloud/framework-types'
 import { ListItem } from './list-item'
-import { RocketFilesConfiguration } from './rocket-files-params'
+import { RocketFilesUserConfiguration } from './rocket-files-params'
 
 export interface RocketFilesProviderLibrary {
   presignedGet(
     config: BoosterConfig,
-    rocketFilesConfiguration: RocketFilesConfiguration,
+    rocketFilesUserConfiguration: RocketFilesUserConfiguration,
     directory: string,
     fileName: string
   ): Promise<string>
   presignedPut(
     config: BoosterConfig,
-    rocketFilesConfiguration: RocketFilesConfiguration,
+    rocketFilesUserConfiguration: RocketFilesUserConfiguration,
     directory: string,
     fileName: string
   ): Promise<string>
   list(
     config: BoosterConfig,
-    rocketFilesConfiguration: RocketFilesConfiguration,
+    rocketFilesUserConfiguration: RocketFilesUserConfiguration,
     directory: string
   ): Promise<Array<ListItem>>
 }

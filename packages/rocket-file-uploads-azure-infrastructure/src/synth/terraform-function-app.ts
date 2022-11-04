@@ -1,5 +1,5 @@
 import { TerraformStack } from 'cdktf'
-import { FunctionApp, StorageAccount } from '@cdktf/provider-azurerm'
+import { FunctionApp } from '@cdktf/provider-azurerm'
 import { BoosterConfig } from '@boostercloud/framework-types'
 import { ApplicationSynthStack, RocketUtils } from '@boostercloud/framework-provider-azure-infrastructure'
 import { getFunctionAppName } from '../helper'
@@ -11,7 +11,7 @@ export class TerraformFunctionApp {
     applicationSynthStack: ApplicationSynthStack,
     config: BoosterConfig,
     utils: RocketUtils,
-    rocketStorageAccount: StorageAccount
+    accountConnections: Record<string, string>
   ): FunctionApp {
     const resourceGroup = applicationSynthStack.resourceGroup!
     const applicationServicePlan = applicationSynthStack.applicationServicePlan!
@@ -39,7 +39,7 @@ export class TerraformFunctionApp {
         BOOSTER_REST_API_URL: `https://${apiManagementServiceName}.azure-api.net/${config.environmentName}`,
         COSMOSDB_CONNECTION_STRING: `AccountEndpoint=https://${cosmosDatabaseName}.documents.azure.com:443/;AccountKey=${cosmosDbConnectionString};`,
         BOOSTER_ROCKET_FUNCTION_ID: functionID,
-        ROCKET_FILES_BLOB_STORAGE: rocketStorageAccount.primaryConnectionString,
+        ...accountConnections,
       },
       osType: 'linux',
       storageAccountName: storageAccount.name,
@@ -48,6 +48,9 @@ export class TerraformFunctionApp {
       dependsOn: [resourceGroup],
       lifecycle: {
         ignoreChanges: ['app_settings["WEBSITE_RUN_FROM_PACKAGE"]'],
+      },
+      identity: {
+        type: 'SystemAssigned',
       },
     })
   }

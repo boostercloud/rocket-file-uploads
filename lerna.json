@@ -7,9 +7,10 @@
       "exact": true
     },
     "bootstrap": {
-      "hoist": true
+      "hoist": true,
+      "strict": true
     }
   },
-  "version": "0.3.0",
+  "version": "0.30.6",
   "npmClient": "npm"
 }

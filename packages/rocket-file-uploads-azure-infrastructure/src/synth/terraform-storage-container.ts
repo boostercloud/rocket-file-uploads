@@ -7,12 +7,12 @@ export class TerraformStorageContainer {
     terraformStack: TerraformStack,
     appPrefix: string,
     rocketStorageAccount: StorageAccount,
-    directory: string,
+    containerName: string,
     utils: RocketUtils
   ): StorageContainer {
-    const id = utils.toTerraformName(appPrefix, `rfsb${directory}`)
+    const id = utils.toTerraformName(rocketStorageAccount.name, `rfsb${containerName}`)
     return new StorageContainer(terraformStack, id, {
-      name: directory,
+      name: containerName,
       storageAccountName: rocketStorageAccount.name,
       containerAccessType: 'private',
     })

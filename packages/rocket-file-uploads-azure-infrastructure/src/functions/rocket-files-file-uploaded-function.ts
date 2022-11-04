@@ -9,9 +9,13 @@ export declare type BlobBinding = Binding & {
 export declare type BlobFunctionDefinition = FunctionDefinition<BlobBinding>
 
 export class RocketFilesFileUploadedFunction {
-  static getFunctionDefinition(config: BoosterConfig, containerName: string): BlobFunctionDefinition {
+  static getFunctionDefinition(
+    config: BoosterConfig,
+    containerName: string,
+    storageName: string
+  ): BlobFunctionDefinition {
     return {
-      name: 'fileupload',
+      name: `fileupload_${storageName}`,
       config: {
         bindings: [
           {
@@ -19,7 +23,7 @@ export class RocketFilesFileUploadedFunction {
             direction: 'in',
             name: 'blobUpload',
             path: `${containerName}/{name}`,
-            connection: 'ROCKET_FILES_BLOB_STORAGE',
+            connection: storageName,
           },
         ],
         scriptFile: config.functionRelativePath,

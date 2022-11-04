@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-azure-infrastructure",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "File Uploads Booster Rocket Azure Infrastructure Library",
   "keywords": [
     "Booster",
@@ -24,15 +24,15 @@
     "url": "git+https://github.com/boostercloud/rocket-files.git"
   },
   "peerDependencies": {
-    "@boostercloud/framework-core": "^0.30.4",
-    "@boostercloud/framework-types": "^0.30.4"
+    "@boostercloud/framework-core": "^0.30.8",
+    "@boostercloud/framework-types": "^0.30.8"
   },
   "dependencies": {
-    "@boostercloud/rocket-file-uploads-types": "^0.3.0"
+    "@boostercloud/rocket-file-uploads-types": "0.4.0"
   },
   "devDependencies": {
-    "@boostercloud/framework-provider-azure-infrastructure": "^0.30.4",
-    "@boostercloud/metadata-booster": "^0.30.4",
+    "@boostercloud/framework-provider-azure-infrastructure": "^0.30.8",
+    "@boostercloud/metadata-booster": "^0.30.8",
     "@cdktf/provider-azurerm": "0.2.179",
     "@types/mustache": "^4.1.0",
     "@types/node": "16.4.11",
@@ -45,7 +45,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "mustache": "4.1.0",
     "prettier": "^2.3.2",
-    "typescript": "4.5.4"
+    "typescript": "4.7.4"
   },
   "scripts": {
     "lint:check": "eslint --ext '.js,.ts' **/*.ts",

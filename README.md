@@ -19,6 +19,9 @@ These methods may be used from a Command in your project secured via JWT Token.
 
 This rocket also provides a Booster Event each time a file is uploaded.
 
+> [!NOTE] Starting at version 0.4.0 this Rocket use **Managed Identities** instead of **Connection Strings**. Please, 
+> check that you have the required permissions to assign roles https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal-managed-identity#prerequisites
+
 ## Usage
 
 Install needed **dependency** packages:
@@ -63,42 +66,62 @@ import { BoosterConfig } from '@boostercloud/framework-types'
 import { BoosterRocketFiles } from '@boostercloud/rocket-file-uploads-core'
 import { RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-types'
 
-const configuration: RocketFilesUserConfiguration = {
-  containerName: 'test',
-  directories: ['folder01', 'folder02'],
+const rocketFilesConfigurationDefault: RocketFilesUserConfiguration = {
+  storageName: 'clientst',
+  containerName: 'rocketfiles',
+  directories: ['client1', 'client2'],
 }
 
+const rocketFilesConfigurationCms: RocketFilesUserConfiguration = {
+  storageName: 'cmsst',
+  containerName: 'rocketfiles',
+  directories: ['cms1', 'cms2'],
+}
+
+const APP_NAME = 'test'
+
 Booster.configure('production', (config: BoosterConfig): void => {
-  config.appName = 'test-rockets-files'
+  config.appName = APP_NAME
   config.providerPackage = '@boostercloud/framework-provider-azure'
-  config.rockets = [new BoosterRocketFiles(config, configuration).rocketForAzure()]
+  config.rockets = [
+    new BoosterRocketFiles(config, [rocketFilesConfigurationDefault, rocketFilesConfigurationCms]).rocketForAzure(),
+  ]
 })
 
 Booster.configure('local', (config: BoosterConfig): void => {
-  config.appName = 'test-rockets-files'
+  config.appName = APP_NAME
   config.providerPackage = '@boostercloud/framework-provider-local'
-  config.rockets = [new BoosterRocketFiles(config, configuration).rocketForLocal()]
+  config.rockets = [
+    new BoosterRocketFiles(config, [rocketFilesConfigurationDefault, rocketFilesConfigurationCms]).rocketForLocal(),
+  ]
 })
+
 ```
 
 Available parameters are:
 
-- `directories` A list of folders where the files will be stored
+- `storageName`: Name of the storage repository.
 - `containerName`: Directories container
+- `directories` A list of folders where the files will be stored
 
-For Azure provider you can configure the storage account name. You need to set the `storageAccountName` in the `rocketForAzure` method.
+> [!NOTE] Azure Provider will use `storageName` as the **Storage Account Name**. 
+> Local Provider will use it as the **root folder name**
 
-```typescript
-  config.rockets = [
-    new BoosterRocketFiles(config, rocketFilesConfiguration).rocketForAzure({
-      storageAccountName: 'myproject123456',
-    }),
-  ]
-```
+The structure created will be:
+>    * storage
+>        * container
+>            * directory
+
+> [!NOTE] Azure and Local provider urls are not equals. For Local you will need to use:
+> http://localhost:3000/storageName/containerName/filename.ext but for Azure:
+> http://storageAccountUrl:3000/containerName/filename.ext
+
 
 ### PresignedPut Usage
 
-Create a command in your application and call the `presignedPut` method on the FileHandler class with the `directory` and `filename` you want to upload.
+Create a command in your application and call the `presignedPut` method on the FileHandler class with the `directory` and `filename` you want to upload on the storage.
+
+The `storageName` parameter is optional. It will use the first storage if undefined.
 
 ```typescript
 import { Booster, Command } from '@boostercloud/framework-core'
@@ -109,23 +132,26 @@ import { FileHandler } from '@boostercloud/rocket-file-uploads-core'
   authorize: 'all',
 })
 export class FileUploadPut {
-  public constructor(readonly directory: string, readonly fileName: string) {}
+  public constructor(readonly directory: string, readonly fileName: string, readonly storageName?: string) {}
 
-public static async handle(command: FileUploadPut, register: Register): Promise<string> {
-  const boosterConfig = Booster.config
-  const fileHandler = new FileHandler(boosterConfig)
-  return await fileHandler.presignedPut(command.directory, command.fileName)
+  public static async handle(command: FileUploadPut, register: Register): Promise<string> {
+    const boosterConfig = Booster.config
+    const fileHandler = new FileHandler(boosterConfig, command.storageName)
+    return await fileHandler.presignedPut(command.directory, command.fileName)
+  }
 }
-
-}
-
 ```
 
 Mutation example:
 
 ```graphql
 mutation {
-    FileUploadPut(input: {directory: "folder01", fileName: "3.txt"})
+  FileUploadPut(input: {
+    storageName: "clientst",
+    directory: "client1",
+    fileName: "myfile.txt"
+  }
+  )
 }
 ```
 
@@ -134,7 +160,7 @@ This returns the following payload:
 ```json
 {
   "data": {
-    "FileUploadPut": "https://yourapplication.blob.core.windows.net/rocketfiles/folder01%2F3.txt?sv=2020-10-02&st=2022-01-24T16%3A49%3A29Z&se=2022-01-24T16%3A50%3A55Z&sr=b&sp=w&sig=xxxxxxxxxx%3D"
+    "FileUploadPut": "https://clientst.blob.core.windows.net/rocketfiles/client1/myfile.txt?<SAS>"
   }
 }
 ```
@@ -143,7 +169,7 @@ Note: For Local Provider, the url will be simpler:
 ```json
 {
   "data": {
-    "FileUploadPut": "rocketfiles/folder01%2F3.txt"
+    "FileUploadPut": "clientst/rocketfiles/client1/myfile.txt"
   }
 }
 ```
@@ -155,7 +181,7 @@ That can be used in a new PUT rest call replacing the `AZ_URL` with the `FileUpl
 
 DATE_NOW=$(date -Ru | sed 's/\+0000/GMT/')
 AZ_VERSION="2020-02-10"
-FILE_PATH="~/1.txt"
+FILE_PATH="~/myfile.txt"
 AZ_URL="<FileUploadPut>"
 
 curl -v -X PUT \
@@ -174,8 +200,8 @@ For Local Provider, the request could be:
 
 DATE_NOW=$(date -Ru | sed 's/\+0000/GMT/')
 AZ_VERSION="2020-02-10"
-FILE_PATH="~/1.txt"
-AZ_URL="http://localhost:3000/rocketfiles/folder02/1.txt"
+FILE_PATH="~/myfile.txt"
+AZ_URL="http://localhost:3000/rocketfiles/folder02/myfile.txt"
 
 curl -v -X PUT \
 -H "Content-Type: application/octet-stream" \
@@ -186,11 +212,15 @@ curl -v -X PUT \
 "${AZ_URL}"
 ```
 
+Local Provider will write files on `.<storageName>/rocketfiles` folder
+
 **Note**: Azure will return a 201 status but Local will return a 200
 
 ### PresignedGet Usage
 
-Create a command in your application and call the `presignedGet` method on the FileHandler class with the `directory` and `filename` you want to get.
+Create a command in your application and call the `presignedGet` method on the FileHandler class with the `directory` and `filename` you want to get on the storage.
+
+The `storageName` parameter is optional. It will use the first storage if undefined.
 
 ```typescript
 import { Booster, Command } from '@boostercloud/framework-core'
@@ -201,13 +231,13 @@ import { FileHandler } from '@boostercloud/rocket-file-uploads-core'
   authorize: 'all',
 })
 export class FileUploadGet {
-  public constructor(readonly directory: string, readonly fileName: string) {}
+  public constructor(readonly directory: string, readonly fileName: string, readonly storageName?: string) {}
 
-public static async handle(command: FileUploadGet, register: Register): Promise<string> {
-  const boosterConfig = Booster.config
-  const fileHandler = new FileHandler(boosterConfig)
-  return await fileHandler.presignedGet(command.directory, command.fileName)
-}
+  public static async handle(command: FileUploadGet, register: Register): Promise<string> {
+    const boosterConfig = Booster.config
+    const fileHandler = new FileHandler(boosterConfig, command.storageName)
+    return await fileHandler.presignedGet(command.directory, command.fileName)
+  }
 }
 ```
 
@@ -215,7 +245,12 @@ Mutation example:
 
 ```graphql
 mutation {
-    FileUploadGet(input: {directory: "folder01", fileName: "3.txt"})
+  FileUploadGet(input: {
+    storageName: "clientst",
+    directory: "client1",
+    fileName: "myfile.txt"
+  }
+  )
 }
 ```
 
@@ -224,7 +259,7 @@ This returns the following payload:
 ```json
 {
   "data": {
-    "FileUploadGet": "https://testrocketsfiles013rocke.blob.core.windows.net/rocketfiles/folder01%2F3.txt?sv=2020-10-02&st=2022-01-24T16%3A51%3A35Z&se=2022-01-24T16%3A53%3A02Z&sr=b&sp=r&sig=xxxxxxxx%3D"
+    "FileUploadGet": "https://clientst.blob.core.windows.net/rocketfiles/folder01%2Fmyfile.txt?<SAS>"
   }
 }
 ```
@@ -233,11 +268,10 @@ NOTE: For Local Provider, the url will be simpler:
 ```json
 {
   "data": {
-    "FileUploadGet": "rocketfiles/folder01"
+    "FileUploadGet": "clientst/rocketfiles/client1/myfile.txt"
   }
 }
 ```
-
 
 That can be used in a new GET rest call with the `FileUploadGet` field from the previous response:
 
@@ -247,7 +281,9 @@ curl --request GET '<FileUploadGet>'
 
 ### List Usage
 
-Create a command in your application and call the `list` method on the FileHandler class with the `directory` you want to get the info and return the formatted results
+Create a command in your application and call the `list` method on the FileHandler class with the `directory` you want to get the info and return the formatted results.
+
+The `storageName` parameter is optional. It will use the first storage if undefined.
 
 ```typescript
 import { Booster, Command } from '@boostercloud/framework-core'
@@ -259,21 +295,26 @@ import { ListItem } from '@boostercloud/rocket-file-uploads-types'
   authorize: 'all',
 })
 export class FileUploadList {
-  public constructor(readonly directory: string) {}
+  public constructor(readonly directory: string, readonly storageName?: string) {}
 
-public static async handle(command: FileUploadList, register: Register): Promise<Array<ListItem>> {
-  const boosterConfig = Booster.config
-  const fileHandler = new FileHandler(boosterConfig)
-  return await fileHandler.list(command.directory)
+  public static async handle(command: FileUploadList, register: Register): Promise<Array<ListItem>> {
+    const boosterConfig = Booster.config
+    const fileHandler = new FileHandler(boosterConfig, command.storageName)
+    return await fileHandler.list(command.directory)
+  }
 }
-}
+
 ```
 
 Mutation example:
 
 ```graphql
 mutation {
-  FileUploadList(input: {directory: "folder02"}) 
+  FileUploadList(input: {
+    storageName: "clientst",
+    directory: "client1"
+  }
+  )
 }
 ```
 
@@ -282,12 +323,37 @@ This returns the following payload:
 ```json
 {
   "data": {
-    "FileUploadList": "[{\"name\":\"folder02/x.txt\",\"properties\":{\"createdOn\":\"2022-01-22T19:21:00.000Z\",\"lastModified\":\"2022-01-22T19:21:00.000Z\",\"contentLength\":101,\"contentType\":\"text/plain\"},\"metadata\":\"\"},{\"name\":\"folder02/1.txt\",\"properties\":{\"createdOn\":\"2022-01-22T19:14:40.000Z\",\"lastModified\":\"2022-01-22T19:17:18.000Z\",\"contentLength\":9,\"contentType\":\"application/octet-stream\"},\"metadata\":\"\"},{\"name\":\"folder02/3.txt\",\"properties\":{\"createdOn\":\"2022-01-22T19:20:53.000Z\",\"lastModified\":\"2022-01-22T19:20:53.000Z\",\"contentLength\":9,\"contentType\":\"text/plain\"},\"metadata\":\"\"}]"
+    "FileUploadList": [
+      {
+        "name": "client1/myfile.txt",
+        "properties": {
+          "createdOn": "2022-10-26T05:40:47.000Z",
+          "lastModified": "2022-10-26T05:40:47.000Z",
+          "contentLength": 6,
+          "contentType": "text/plain"
+        }
+      }
+    ]
   }
 }
 ```
 
-Local Provider only return `lastModified` property for each file
+Local Provider:
+
+```json
+{
+  "data": {
+    "FileUploadList": [
+      {
+        "name": "client1/myfile.txt",
+        "properties": {
+          "lastModified": "2022-10-26T10:35:18.905Z"
+        }
+      }
+    ]
+  }
+}
+```
 
 ### Uploaded files event Usage
 
@@ -302,15 +368,16 @@ import { UploadedFileEntity } from '@boostercloud/rocket-file-uploads-types'
   authorize: 'all',
 })
 export class UploadedFileEntityReadModel {
-  public constructor(public id: string, readonly metadata: unknown) {}
+  public constructor(public id: string, readonly metadata: unknown) {
+  }
 
-@Projects(UploadedFileEntity, 'id')
-public static projectUploadedFileEntity(
-  entity: UploadedFileEntity,
-  currentUploadedFileEntityReadModel?: UploadedFileEntityReadModel
-): ProjectionResult<UploadedFileEntity> {
-  return new UploadedFileEntityReadModel(entity.id, entity.metadata)
-}
+  @Projects(UploadedFileEntity, 'id')
+  public static projectUploadedFileEntity(
+    entity: UploadedFileEntity,
+    currentUploadedFileEntityReadModel?: UploadedFileEntityReadModel
+  ): ProjectionResult<UploadedFileEntity> {
+    return new UploadedFileEntityReadModel(entity.id, entity.metadata)
+  }
 }
 ```
 
@@ -318,7 +385,7 @@ Mutation example:
 
 ```graphql
 query{
-    UploadedFileEntityReadModels(filter: {}){
+    ListUploadedFileEntityReadModels(filter: {}){
         id
         metadata
     }
@@ -330,41 +397,72 @@ This returns the following payload:
 ```json
 {
   "data": {
-    "UploadedFileEntityReadModel": {
-      "id": "7edd9f0331e61001553e619c3372279b",
+    "ListUploadedFileEntityReadModels": {
+      "items": [
+        {
+          "id": "f119ef635226888dd1bacd734f8955db",
       "metadata": {
-        "invocationId": "xxxxxx",
-        "blobTrigger": "rocketfiles/folder02/1.txt",
-        "uri": "https://yourapplication.blob.core.windows.net/rocketfiles/folder02/1.txt",
+            "invocationId": "99eff710-54bb-4c44-827b-154ce43c70bc",
+            "blobTrigger": "rocketfiles/client1/myfile.txt",
+            "uri": "https://clientst/rocketfiles/client1/myfile.txt",
         "properties": {
-          "cacheControl": null,
-          "contentDisposition": null,
+              "lastModified": "2022-09-29T10:42:39+00:00",
+              "createdOn": "2022-09-29T10:42:39+00:00",
+              "metadata": {},
+              "objectReplicationDestinationPolicyId": null,
+              "objectReplicationSourceProperties": null,
+              "blobType": 0,
+              "copyCompletedOn": "0001-01-01T00:00:00+00:00",
+              "copyStatusDescription": null,
+              "copyId": null,
+              "copyProgress": null,
+              "copySource": null,
+              "copyStatus": 0,
+              "blobCopyStatus": null,
+              "isIncrementalCopy": false,
+              "destinationSnapshot": null,
+              "leaseDuration": 0,
+              "leaseState": 0,
+              "leaseStatus": 1,
+              "contentLength": 11,
+              "contentType": "text/plain",
+              "eTag": {},
+              "contentHash": "Ej+7bbuBEYwNXlItWUn36w==",
           "contentEncoding": null,
+              "contentDisposition": null,
           "contentLanguage": null,
-          "length": 9,
-          "contentMD5": "xxxxx",
-          "contentType": "application/octet-stream",
-          "eTag": "\"0xxxxxxx\"",
-          "created": "2022-01-22T19:14:40+00:00",
-          "lastModified": "2022-01-22T19:17:18+00:00",
-          "blobType": 2,
-          "leaseStatus": 2,
-          "leaseState": 1,
-          "leaseDuration": 0,
-          "pageBlobSequenceNumber": null,
-          "appendBlobCommittedBlockCount": null,
+              "cacheControl": null,
+              "blobSequenceNumber": 0,
+              "acceptRanges": "bytes",
+              "blobCommittedBlockCount": 0,
           "isServerEncrypted": true,
-          "isIncrementalCopy": false,
-          "standardBlobTier": 1,
-          "rehydrationStatus": null,
-          "premiumPageBlobTier": null,
-          "blobTierInferred": true,
-          "blobTierLastModifiedTime": null,
-          "deletedTime": null,
-          "remainingDaysBeforePermanentDelete": null
+              "encryptionKeySha256": null,
+              "encryptionScope": null,
+              "accessTier": "Hot",
+              "accessTierInferred": true,
+              "archiveStatus": null,
+              "accessTierChangedOn": "0001-01-01T00:00:00+00:00",
+              "versionId": null,
+              "isLatestVersion": false,
+              "tagCount": 0,
+              "expiresOn": "0001-01-01T00:00:00+00:00",
+              "isSealed": false,
+              "rehydratePriority": null,
+              "lastAccessed": "0001-01-01T00:00:00+00:00",
+              "immutabilityPolicy": {
+                "expiresOn": null,
+                "policyMode": null
+              },
+              "hasLegalHold": false
         },
         "metadata": {},
-        "name": "folder02/1.txt"
+            "name": "client1/myfile.txt"
+          }
+        }
+      ],
+      "count": 1,
+      "cursor": {
+        "id": "1"
       }
     }
   }
@@ -376,27 +474,21 @@ For Local
 ```shell
 {
   "data": {
-    "UploadedFileEntityReadModels": [
-      {
-        "id": "1",
-        "metadata": {
-          "name": "folder02/1.txt"
+    "ListUploadedFileEntityReadModels": {
+      "items": [
+        {
+          "id": "xxx",
+          "metadata": {
+            "uri": "clientst/rocketfiles/client1/myfile.txt",
+            "name": "client1/myfile.txt"
+          }
         }
-      },
-      {
-        "id": "2",
-        "metadata": {
-          "name": "folder02/1.txt"
-          "eventType": "rename"
-        }
-      },
-      {
-        "id": "3",
-        "metadata": {
-          "name": "folder02/1.txt"
-        }
+      ],
+      "count": 1,
+      "cursor": {
+        "id": "1"
       }
-    ]
+    }
   }
 }
 ```
@@ -409,51 +501,82 @@ On Azure the event will be like this:
 
 ```json
 {
-    "version": 1,
-    "kind": "snapshot",
-    "requestID": "xxxxxx",
-    "entityID": "xxxxx",
-    "entityTypeName": "UploadedFileEntity",
-    "typeName": "UploadedFileEntity",
-    "value": {
-        "id": "xxxxx",
-        "metadata": {
-            "invocationId": "xxxxxx",
-            "blobTrigger": "rocketfiles/folder02/folder01_3.txt",
-            "uri": "https://yourapplication.blob.core.windows.net/rocketfiles/folder02/folder01_3.txt",
-            "properties": {
-                "cacheControl": null,
-                "contentDisposition": null,
-                "contentEncoding": null,
-                "contentLanguage": null,
-                "length": 9,
-                "contentMD5": "xxxx",
-                "contentType": "text/plain",
-                "eTag": "\"0xXXXXX\"",
-                "created": "2022-01-22T19:20:53+00:00",
-                "lastModified": "2022-01-22T19:20:53+00:00",
-                "blobType": 2,
-                "leaseStatus": 2,
-                "leaseState": 1,
-                "leaseDuration": 0,
-                "pageBlobSequenceNumber": null,
-                "appendBlobCommittedBlockCount": null,
-                "isServerEncrypted": true,
-                "isIncrementalCopy": false,
-                "standardBlobTier": 1,
-                "rehydrationStatus": null,
-                "premiumPageBlobTier": null,
-                "blobTierInferred": true,
-                "blobTierLastModifiedTime": null,
-                "deletedTime": null,
-                "remainingDaysBeforePermanentDelete": null
-            },
-            "metadata": {},
-            "name": "folder02/folder01_3.txt"
-        }
-    },
-    "createdAt": "2022-01-22T19:21:04.220Z",
-    "snapshottedEventCreatedAt": "2022-01-22T19:21:02.201Z"
+  "version": 1,
+  "kind": "snapshot",
+  "superKind": "domain",
+  "requestID": "xxx",
+  "entityID": "xxxx",
+  "entityTypeName": "UploadedFileEntity",
+  "typeName": "UploadedFileEntity",
+  "value": {
+    "id": "xxx",
+    "metadata": {
+      "invocationId": "xxx",
+      "blobTrigger": "rocketfiles/client1/myfile.txt",
+      "uri": "https://clientst.blob.core.windows.net/rocketfiles/client1/myfile.txt",
+      "properties": {
+        "lastModified": "2022-10-26T10:23:20+00:00",
+        "createdOn": "2022-10-26T10:23:20+00:00",
+        "metadata": {},
+        "objectReplicationDestinationPolicyId": null,
+        "objectReplicationSourceProperties": null,
+        "blobType": 0,
+        "copyCompletedOn": "0001-01-01T00:00:00+00:00",
+        "copyStatusDescription": null,
+        "copyId": null,
+        "copyProgress": null,
+        "copySource": null,
+        "copyStatus": 0,
+        "blobCopyStatus": null,
+        "isIncrementalCopy": false,
+        "destinationSnapshot": null,
+        "leaseDuration": 0,
+        "leaseState": 0,
+        "leaseStatus": 1,
+        "contentLength": 6,
+        "contentType": "text/plain",
+        "eTag": {},
+        "contentHash": "YmCOCK3Cmo1tvJdU5lnxJQ==",
+        "contentEncoding": null,
+        "contentDisposition": null,
+        "contentLanguage": null,
+        "cacheControl": null,
+        "blobSequenceNumber": 0,
+        "acceptRanges": "bytes",
+        "blobCommittedBlockCount": 0,
+        "isServerEncrypted": true,
+        "encryptionKeySha256": null,
+        "encryptionScope": null,
+        "accessTier": "Hot",
+        "accessTierInferred": true,
+        "archiveStatus": null,
+        "accessTierChangedOn": "0001-01-01T00:00:00+00:00",
+        "versionId": null,
+        "isLatestVersion": false,
+        "tagCount": 0,
+        "expiresOn": "0001-01-01T00:00:00+00:00",
+        "isSealed": false,
+        "rehydratePriority": null,
+        "lastAccessed": "0001-01-01T00:00:00+00:00",
+        "immutabilityPolicy": {
+          "expiresOn": null,
+          "policyMode": null
+        },
+        "hasLegalHold": false
+      },
+      "metadata": {},
+      "name": "client1/myfile.txt"
+    }
+  },
+  "createdAt": "2022-10-26T10:23:36.562Z",
+  "snapshottedEventCreatedAt": "2022-10-26T10:23:32.34Z",
+  "entityTypeName_entityID_kind": "UploadedFileEntity-xxx-b842-x-8975-xx-snapshot",
+  "id": "x-x-x-x-x",
+  "_rid": "x==",
+  "_self": "dbs/x==/colls/x=/docs/x==/",
+  "_etag": "\"x-x-0500-0000-x\"",
+  "_attachments": "attachments/",
+  "_ts": 123456
 }
 ```
 
@@ -463,18 +586,21 @@ On Local, the event will be:
 {
   "version": 1,
   "kind": "snapshot",
-  "requestID": "xxxxxx",
-  "entityID": "xxxxxx",
+  "superKind": "domain",
+  "requestID": "x",
+  "entityID": "x",
   "entityTypeName": "UploadedFileEntity",
   "typeName": "UploadedFileEntity",
   "value": {
-    "id": "xxxxx",
+    "id": "x",
     "metadata": {
-      "fileName": "1.txt"
+      "uri": "clientst/rocketfiles/client1/myfile.txt",
+      "name": "client1/myfile.txt"
     }
   },
-  "createdAt": "2022-01-24T16:08:10.139Z",
-  "snapshottedEventCreatedAt": "2022-01-24T16:08:10.130Z"
+  "createdAt": "2022-10-26T10:35:18.967Z",
+  "snapshottedEventCreatedAt": "2022-10-26T10:35:18.958Z",
+  "_id": "lMolccTNJVojXiLz"
 }
 ```
 
