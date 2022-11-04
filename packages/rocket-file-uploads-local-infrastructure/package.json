@@ -24,15 +24,15 @@
     "url": "git+https://github.com/boostercloud/rocket-files.git"
   },
   "peerDependencies": {
-    "@boostercloud/framework-core": "^0.30.8",
-    "@boostercloud/framework-types": "^0.30.8"
+    "@boostercloud/framework-core": "1.0.1",
+    "@boostercloud/framework-types": "1.0.1"
   },
   "dependencies": {
     "@boostercloud/rocket-file-uploads-types": "^0.31.0"
   },
   "devDependencies": {
-    "@boostercloud/framework-provider-local-infrastructure": "^0.30.8",
-    "@boostercloud/metadata-booster": "^0.30.8",
+    "@boostercloud/framework-provider-local-infrastructure": "1.0.1",
+    "@boostercloud/metadata-booster": "1.0.1",
     "@types/mustache": "^4.1.0",
     "@types/node": "16.4.11",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
