@@ -24,9 +24,9 @@
     "url": "git+https://github.com/boostercloud/rocket-files.git"
   },
   "peerDependencies": {
-    "@boostercloud/framework-core": "1.0.1",
-    "@boostercloud/framework-provider-azure": "1.0.1",
-    "@boostercloud/framework-types": "1.0.1"
+    "@boostercloud/framework-core": ">= 1.0.0",
+    "@boostercloud/framework-provider-azure": ">= 1.0.0",
+    "@boostercloud/framework-types": ">= 1.0.0"
   },
   "dependencies": {
     "@azure/functions": "3.0.0",
@@ -44,7 +44,7 @@
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-prettier": "^3.4.0",
     "prettier": "^2.3.2",
-    "typescript": "4.7.4"
+    "typescript": "4.5.4"
   },
   "scripts": {
     "lint:check": "eslint --ext '.js,.ts' **/*.ts",
