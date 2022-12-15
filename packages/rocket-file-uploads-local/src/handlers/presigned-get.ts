@@ -1,5 +1,5 @@
 import { BoosterConfig } from '@boostercloud/framework-types'
-import { RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-types'
+import { RocketFilesUserConfiguration, localPort } from '@boostercloud/rocket-file-uploads-types'
 
 export async function presignedGet(
   _config: BoosterConfig,
@@ -7,5 +7,5 @@ export async function presignedGet(
   directory: string,
   fileName: string
 ): Promise<string> {
-  return `${rocketFilesUserConfiguration.storageName}/${rocketFilesUserConfiguration.containerName}/${directory}/${fileName}`
+  return `http://localhost:${localPort()}/${rocketFilesUserConfiguration.storageName}/${rocketFilesUserConfiguration.containerName}/${directory}/${fileName}`
 }
