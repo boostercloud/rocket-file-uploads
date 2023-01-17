@@ -44,6 +44,7 @@ export class FileHandler {
   private static getRocketFromConfiguration(config: BoosterConfig): RocketDescriptor {
     const rocketDescriptor = config.rockets?.find(
       (rocket) =>
+        rocket.packageName == '@boostercloud/rocket-file-uploads-aws-infrastructure' ||
         rocket.packageName == '@boostercloud/rocket-file-uploads-azure-infrastructure' ||
         rocket.packageName == '@boostercloud/rocket-file-uploads-local-infrastructure'
     ) as RocketDescriptor

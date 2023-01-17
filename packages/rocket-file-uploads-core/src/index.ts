@@ -15,6 +15,18 @@ export class BoosterRocketFiles {
     readonly userConfiguration: RocketFilesUserConfiguration | Array<RocketFilesUserConfiguration>
   ) {}
 
+  public rocketForAWS(): RocketDescriptor {
+    const configuration = BoosterRocketFiles.buildParameters(
+      this.userConfiguration,
+      '@boostercloud/rocket-file-uploads-aws'
+    )
+    this.register(configuration)
+    return {
+      packageName: '@boostercloud/rocket-file-uploads-aws-infrastructure',
+      parameters: configuration,
+    }
+  }
+
   public rocketForAzure(): RocketDescriptor {
     const configuration = BoosterRocketFiles.buildParameters(
       this.userConfiguration,
