@@ -7,6 +7,7 @@ export interface RocketFilesUserConfiguration {
 }
 
 export type RocketProviderPackageType =
+  | '@boostercloud/rocket-file-uploads-aws'
   | '@boostercloud/rocket-file-uploads-azure'
   | '@boostercloud/rocket-file-uploads-local'
 
