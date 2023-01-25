@@ -16,6 +16,7 @@ export const methods: Map<string, Function> = new Map([
     ['remove', (requestParams: RequestParams) => removeFile(requestParams)],
   ])
 
+// TODO: Rename this class? (is 'Blob' too Azure-ish?)
 export class BlobService {
     private readonly s3 = new AWS.S3()
 
