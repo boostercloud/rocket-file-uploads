@@ -34,12 +34,7 @@ export class Synth {
         `${userConfiguration.storageName}-s3-operations`,
         'operations',
         createEnvironment({
-          BUCKET: userConfiguration.storageName,
-          FILE_ACL: params.fileAcl,
-          AUTH_PARAMS: params.authParams ? JSON.stringify(params.authParams) : undefined,
-          JWKS_URI: config.tokenVerifiers?.jwksUri,
-          JWT_ISSUER: config.tokenVerifiers?.issuer,
-          ROLES_CLAIM: config.tokenVerifiers?.rolesClaim ?? 'cognito:groups',
+          BUCKET: userConfiguration.storageName
         })
       )
       console.log(`***** Grant lambda permissions to read/write/delete to bucket: ${userConfiguration.storageName}`)
@@ -96,7 +91,7 @@ export class Synth {
   }
 
   public static async unmountStack(configuration: RocketFilesConfiguration, utils: RocketUtils): Promise<void> {
-    configuration.userConfiguration.forEach((userConfiguration) => {
+    configuration.userConfiguration.forEach(async (userConfiguration) => {
       await utils.s3.emptyBucket(userConfiguration.storageName)
     })
   }

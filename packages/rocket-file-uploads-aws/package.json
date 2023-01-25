@@ -1,0 +1,26 @@
+{
+  "name": "rocket-file-uploads-aws",
+  "version": "0.32.0",
+  "description": "File Upload Booster Rocket AWS Integration Library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boostercloud/rocket-files.git"
+  },
+  "keywords": [
+    "Booster",
+    "plugin",
+    "AWS",
+    "files",
+    "upload"
+  ],
+  "author": "Booster Cloud",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/boostercloud/rocket-files/issues"
+  },
+  "homepage": "https://github.com/boostercloud/rocket-files#readme"
+}
