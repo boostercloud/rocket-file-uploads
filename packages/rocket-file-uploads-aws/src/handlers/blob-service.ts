@@ -1,5 +1,5 @@
-import { S3 } from "aws-sdk"
-import AWS = require("aws-sdk")
+import * as AWS from 'aws-sdk'
+import { S3 } from 'aws-sdk'
 import { presignedGet } from "./presigned-get"
 import { presignedPostUrl } from "./presigned-put"
 import { removeFile } from "./remove-file"
@@ -18,6 +18,7 @@ export const methods: Map<string, Function> = new Map([
 
 // TODO: Rename this class? (is 'Blob' too Azure-ish?)
 export class BlobService {
+    
     private readonly s3 = new AWS.S3()
 
     public async presignedGetUrl(parameters: RequestParams): Promise<string> {

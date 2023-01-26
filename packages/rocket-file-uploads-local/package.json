@@ -29,7 +29,7 @@
     "@boostercloud/framework-types": ">= 1.3.3"
   },
   "dependencies": {
-    "@boostercloud/rocket-file-uploads-types": "^0.32.0"
+    "@boostercloud/rocket-file-uploads-types": "file:///Users/damienvieira/Desktop/BoosterDependencies/boostercloud-rocket-file-uploads-types-0.32.0.tgz"
   },
   "devDependencies": {
     "@boostercloud/metadata-booster": "1.3.3",

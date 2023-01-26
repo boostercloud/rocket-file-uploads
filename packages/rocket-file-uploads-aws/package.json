@@ -1,11 +1,8 @@
 {
-  "name": "rocket-file-uploads-aws",
+  "name": "@boostercloud/rocket-file-uploads-aws",
   "version": "0.32.0",
   "description": "File Upload Booster Rocket AWS Integration Library",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/boostercloud/rocket-files.git"
@@ -19,6 +16,35 @@
   ],
   "author": "Booster Cloud",
   "license": "Apache-2.0",
+  "dependencies": {
+    "@aws-cdk/aws-apigateway": "1.188.0",
+    "@aws-cdk/aws-dynamodb": "1.188.0",
+    "@aws-cdk/aws-iam": "1.188.0",
+    "@aws-cdk/aws-lambda": "1.188.0",
+    "@aws-cdk/aws-lambda-event-sources": "1.188.0",
+    "@aws-cdk/aws-s3": "1.188.0",
+    "@aws-cdk/core": "1.188.0",
+    "@boostercloud/rocket-file-uploads-types": "file:///Users/damienvieira/Desktop/BoosterDependencies/boostercloud-rocket-file-uploads-types-0.32.0.tgz"
+  },
+  "devDependencies": {
+    "aws-sdk": "2.853.0",
+    "@boostercloud/metadata-booster": "1.3.3",
+    "@types/node": "16.4.11",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.3.2",
+    "typescript": "4.7.4"
+  },
+  "scripts": {
+    "lint:check": "eslint --ext '.js,.ts' **/*.ts",
+    "lint:fix": "eslint --quiet --fix --ext '.js,.ts' **/*.ts",
+    "compile": "tsc -b tsconfig.json",
+    "clean": "rimraf ./dist tsconfig.tsbuildinfo"
+  },
   "bugs": {
     "url": "https://github.com/boostercloud/rocket-files/issues"
   },
