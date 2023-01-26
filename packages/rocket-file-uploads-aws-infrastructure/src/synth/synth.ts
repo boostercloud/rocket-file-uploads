@@ -9,7 +9,7 @@ import { Table } from '@aws-cdk/aws-dynamodb'
 import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources'
 import { RocketUtils } from '@boostercloud/framework-provider-aws-infrastructure'
 import { defaultCorsPreflightOptions, corsRules, createLambda, createEnvironment, methodOptions } from '../helpers'
-import { methods } from '@boostercloud/rocket-file-uploads-aws/src/handlers/blob-service' // TODO: Extract this better?
+import { methods } from '@boostercloud/rocket-file-uploads-aws'
 
 export class Synth {
   public static mountStack(configuration: RocketFilesConfiguration, stack: Stack, config: BoosterConfig): Stack {
