@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-local-infrastructure",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "File Uploads Booster Rocket Local Infrastructure Library",
   "keywords": [
     "Booster",
@@ -24,7 +24,7 @@
     "url": "git+https://github.com/boostercloud/rocket-files.git"
   },
   "dependencies": {
-    "@boostercloud/rocket-file-uploads-types": "^1.0.9"
+    "@boostercloud/rocket-file-uploads-types": "^1.0.10"
   },
   "devDependencies": {
     "@boostercloud/framework-provider-local-infrastructure": "1.3.3",
