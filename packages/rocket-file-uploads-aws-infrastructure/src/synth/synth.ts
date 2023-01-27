@@ -26,10 +26,11 @@ export const corsRules = [
 ]
 
 export class Synth {
-  public static mountStack(params: RocketFilesConfiguration, stack: Stack, _config: BoosterConfig): void {
+  public static mountStack(params: RocketFilesConfiguration, stack: Stack, config: BoosterConfig): void {
     params.userConfiguration.forEach((userConfig) => {
-      const bucket = new Bucket(stack, userConfig.containerName, {
-        bucketName: userConfig.containerName,
+      const bucketName = `${userConfig.containerName}-${config.appName}`
+      const bucket = new Bucket(stack, bucketName, {
+        bucketName,
         removalPolicy: RemovalPolicy.DESTROY,
         cors: corsRules,
       })

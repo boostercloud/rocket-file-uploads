@@ -9,8 +9,9 @@ export async function presignedPut(
   fileName: string
 ): Promise<any> {
   const s3 = new AWS.S3()
+  const bucketName = `${rocketFilesUserConfiguration.containerName}-${config.appName}`
   const params = {
-    Bucket: rocketFilesUserConfiguration.storageName,
+    Bucket: bucketName,
     Key: `${directory}/${fileName}`,
   }
   return s3.createPresignedPost(params)
