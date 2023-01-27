@@ -45,5 +45,7 @@ export class Synth {
     })
   }
 
-  public static async unmountStack(params: RocketFilesConfiguration, utils: RocketUtils): Promise<void> {}
+  public static async unmountStack(params: RocketFilesConfiguration, utils: RocketUtils): Promise<void> {
+    //utils.s3.emptyBucket()
+  }
 }
