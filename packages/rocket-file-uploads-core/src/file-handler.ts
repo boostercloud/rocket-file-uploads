@@ -25,7 +25,7 @@ export class FileHandler {
     return this._provider.presignedGet(this.config, this._userConfiguration, directory, fileName)
   }
 
-  public presignedPut(directory: string, fileName: string): Promise<string> {
+  public presignedPut(directory: string, fileName: string): Promise<string> | Promise<any> {
     this.checkDirectory(directory)
     return this._provider.presignedPut(this.config, this._userConfiguration, directory, fileName)
   }
@@ -45,7 +45,8 @@ export class FileHandler {
     const rocketDescriptor = config.rockets?.find(
       (rocket) =>
         rocket.packageName == '@boostercloud/rocket-file-uploads-azure-infrastructure' ||
-        rocket.packageName == '@boostercloud/rocket-file-uploads-local-infrastructure'
+        rocket.packageName == '@boostercloud/rocket-file-uploads-local-infrastructure' ||
+        rocket.packageName == '@boostercloud/rocket-file-uploads-aws-infrastructure'
     ) as RocketDescriptor
     if (!rocketDescriptor) {
       throw new Error('Rocket not found. Please make sure you have setup the rocket packageName correctly')

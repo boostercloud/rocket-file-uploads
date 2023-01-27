@@ -14,7 +14,7 @@ export interface RocketFilesProviderLibrary {
     rocketFilesUserConfiguration: RocketFilesUserConfiguration,
     directory: string,
     fileName: string
-  ): Promise<string>
+  ): Promise<string> | Promise<any>
   list(
     config: BoosterConfig,
     rocketFilesUserConfiguration: RocketFilesUserConfiguration,
