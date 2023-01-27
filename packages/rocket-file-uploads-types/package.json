@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-types",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "File Uploads Booster Rocket Common Types Library",
   "keywords": [
     "Booster",
@@ -22,10 +22,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/boostercloud/rocket-files.git"
-  },
-  "peerDependencies": {
-    "@boostercloud/framework-core": ">= 1.3.3",
-    "@boostercloud/framework-types": ">= 1.3.3"
   },
   "devDependencies": {
     "@boostercloud/metadata-booster": "1.3.3",
