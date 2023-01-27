@@ -2,8 +2,6 @@ import { BoosterConfig } from '@boostercloud/framework-types'
 import { RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-types'
 import * as AWS from 'aws-sdk'
 
-/* TEST */
-
 export async function presignedGet(
   config: BoosterConfig,
   rocketFilesUserConfiguration: RocketFilesUserConfiguration,
@@ -11,8 +9,9 @@ export async function presignedGet(
   fileName: string
 ): Promise<string> {
   const s3 = new AWS.S3()
+  const bucketName = rocketFilesUserConfiguration.storageName + '-' + config.environmentName
   const params = {
-    Bucket: rocketFilesUserConfiguration.storageName,
+    Bucket: bucketName,
     Key: `${directory}/${fileName}`,
   }
   return s3.getSignedUrl('getObject', params)

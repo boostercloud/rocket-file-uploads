@@ -1,10 +1,10 @@
 import { Effect, PolicyStatement } from '@aws-cdk/aws-iam'
 import { Bucket, HttpMethods } from '@aws-cdk/aws-s3'
 import { RemovalPolicy, Stack } from '@aws-cdk/core'
-import { RocketUtils } from '@boostercloud/framework-provider-aws-infrastructure'
 import { BoosterConfig } from '@boostercloud/framework-types'
 import { RocketFilesConfiguration } from '@boostercloud/rocket-file-uploads-types'
 import { Function } from '@aws-cdk/aws-lambda'
+import { RocketUtils } from '@boostercloud/framework-provider-aws-infrastructure'
 
 export const corsRules = [
   {
@@ -28,7 +28,7 @@ export const corsRules = [
 export class Synth {
   public static mountStack(params: RocketFilesConfiguration, stack: Stack, config: BoosterConfig): void {
     params.userConfiguration.forEach((userConfig) => {
-      const bucketName = `${userConfig.containerName}-${config.appName}`
+      const bucketName = userConfig.storageName + '-' + config.environmentName
       const bucket = new Bucket(stack, bucketName, {
         bucketName,
         removalPolicy: RemovalPolicy.DESTROY,
@@ -46,7 +46,7 @@ export class Synth {
     })
   }
 
-  public static async unmountStack(params: RocketFilesConfiguration, utils: RocketUtils): Promise<void> {
+  public static async unmountStack(_params: RocketFilesConfiguration, _utils: RocketUtils): Promise<void> {
     //utils.s3.emptyBucket()
   }
 }
