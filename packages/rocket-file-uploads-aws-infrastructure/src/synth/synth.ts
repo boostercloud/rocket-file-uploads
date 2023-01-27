@@ -43,6 +43,8 @@ export class Synth {
           effect: Effect.ALLOW,
         })
       )
+
+      // TODO: add a lambda that listens to the bucket and sends the events to Booster.
     })
   }
 
