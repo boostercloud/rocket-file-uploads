@@ -5,6 +5,7 @@ This package is a configurable rocket to add a storage API to your Booster appli
 ## Supported Providers
 
 - Azure Provider
+- AWS Provider
 - Local Provider
 
 ## Overview
@@ -14,6 +15,7 @@ This rocket provides some methods to access files stores in your cloud provider:
 - `presignedPut`: Returns a presigned put url and the necessary form params. With this url files can be uploaded directly to your provider.
 - `presignedGet`: Returns a presigned get url to download a file. With this url files can be downloaded directly from your provider.
 - `list`: Returns a list of files stored in the provider.
+- `deleteFile`: Removes a file from a directory (only supported in AWS at the moment).
 
 These methods may be used from a Command in your project secured via JWT Token.
 
@@ -32,30 +34,42 @@ npm install --save @boostercloud/rocket-file-uploads-core @boostercloud/rocket-f
 
 Depending on your provider you could need some of the following **dependency** packages:
 
-_Local Provider:_
-
-```bash
-npm install --save @boostercloud/rocket-file-uploads-local
-```
-
 _Azure Provider:_
 
 ```bash
 npm install --save @boostercloud/rocket-file-uploads-azure
 ```
 
-Also, you will need a **devDependency** in your project, depending on your provider:
+_AWS Provider:_
+
+```bash
+npm install --save @boostercloud/rocket-file-uploads-aws
+```
 
 _Local Provider:_
 
 ```bash
-npm install --save-dev @boostercloud/rocket-file-uploads-local-infrastructure
+npm install --save @boostercloud/rocket-file-uploads-local
 ```
+
+Also, you will need a **devDependency** in your project, depending on your provider:
 
 _Azure Provider_
 
 ```bash
 npm install --save-dev @boostercloud/rocket-file-uploads-azure-infrastructure
+```
+
+_AWS Provider_
+
+```bash
+npm install --save-dev @boostercloud/rocket-file-uploads-aws-infrastructure
+```
+
+_Local Provider:_
+
+```bash
+npm install --save-dev @boostercloud/rocket-file-uploads-local-infrastructure
 ```
 
 In your Booster config file, configure your `BoosterRocketFiles`:
@@ -68,7 +82,7 @@ import { RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-
 
 const rocketFilesConfigurationDefault: RocketFilesUserConfiguration = {
   storageName: 'clientst',
-  containerName: 'rocketfiles',
+  containerName: 'rocketfiles', // Not used in AWS (you can just pass '' in this case)
   directories: ['client1', 'client2'],
 }
 
@@ -80,6 +94,7 @@ const rocketFilesConfigurationCms: RocketFilesUserConfiguration = {
 
 const APP_NAME = 'test'
 
+// AZURE Config:
 Booster.configure('production', (config: BoosterConfig): void => {
   config.appName = APP_NAME
   config.providerPackage = '@boostercloud/framework-provider-azure'
@@ -88,6 +103,16 @@ Booster.configure('production', (config: BoosterConfig): void => {
   ]
 })
 
+// AWS Config:
+Booster.configure('production', (config: BoosterConfig): void => {
+  config.appName = APP_NAME
+  config.providerPackage = '@boostercloud/framework-provider-aws'
+  config.rockets = [
+    new BoosterRocketFiles(config, [rocketFilesConfigurationDefault, rocketFilesConfigurationCms]).rocketForAWS(),
+  ]
+})
+
+// LOCAL Config:
 Booster.configure('local', (config: BoosterConfig): void => {
   config.appName = APP_NAME
   config.providerPackage = '@boostercloud/framework-provider-local'
@@ -107,7 +132,7 @@ Available parameters are:
 > [!NOTE] Azure Provider will use `storageName` as the **Storage Account Name**. 
 > Local Provider will use it as the **root folder name**
 
-The structure created will be:
+The structure created for Azure and the Local Provider will be:
 >    * storage
 >        * container
 >            * directory
@@ -115,6 +140,10 @@ The structure created will be:
 > [!NOTE] Azure and Local provider urls are not equals. For Local you will need to use:
 > http://localhost:3000/storageName/containerName/filename.ext but for Azure:
 > http://storageAccountUrl:3000/containerName/filename.ext
+
+The `container` parameter is **not used** in AWS, so the structure created will be:
+>    * storage
+>       * directory
 
 
 ### PresignedPut Usage
