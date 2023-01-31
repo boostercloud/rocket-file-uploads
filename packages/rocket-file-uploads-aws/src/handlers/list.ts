@@ -1,5 +1,5 @@
 import { BoosterConfig } from '@boostercloud/framework-types'
-import { ListItem, RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-types'
+import { ListItem, ListItemProperties, RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-types'
 import * as AWS from 'aws-sdk'
 
 export async function list(
@@ -16,20 +16,17 @@ export async function list(
     };
   
     const data = await s3.listObjectsV2(params).promise()
-    if (!data.Contents) {
-        return []
-    }
-
-    return data.Contents.map((object) => { 
+    
+    return data.Contents?.map((object) => { 
         return ({
         name: object.Key,
         properties: {
             createdOn: object.LastModified,
             lastModified: object.LastModified,
             contentLength: object.Size,
-            contentType: object.StorageClass,
-        },
-        metadata: object.StorageClass,
+            contentType: undefined,
+        } as ListItemProperties,
+        metadata: undefined,
         }) as ListItem
-    })
+    }) ?? []
 }
