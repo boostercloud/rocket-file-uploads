@@ -24,6 +24,7 @@ export interface RocketFilesProviderLibrary {
     directory: string
   ): Promise<Array<ListItem>>
 
+  /// Only supported in AWS at the moment.
   deleteFile(
     config: BoosterConfig, 
     rocketFilesUserConfiguration: RocketFilesUserConfiguration, 

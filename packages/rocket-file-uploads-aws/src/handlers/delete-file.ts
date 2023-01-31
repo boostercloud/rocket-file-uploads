@@ -2,7 +2,6 @@ import { BoosterConfig } from '@boostercloud/framework-types'
 import { RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-types'
 import * as AWS from 'aws-sdk'
 
-
 export async function deleteFile(
   config: BoosterConfig, 
   rocketFilesUserConfiguration: RocketFilesUserConfiguration, 

@@ -27,7 +27,7 @@ export class BoosterRocketFiles {
     }
   }
 
-  public rocketForAws(): RocketDescriptor {
+  public rocketForAWS(): RocketDescriptor {
     const configuration = BoosterRocketFiles.buildParameters(
       this.userConfiguration,
       '@boostercloud/rocket-file-uploads-aws'
