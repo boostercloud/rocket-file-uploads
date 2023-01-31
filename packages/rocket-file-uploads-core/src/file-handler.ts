@@ -35,6 +35,11 @@ export class FileHandler {
     return this._provider.list(this.config, this._userConfiguration, directory)
   }
 
+  public deleteFile(directory: string, fileName: string): Promise<boolean> {
+    this.checkDirectory(directory)
+    return this._provider.deleteFile(this.config, this._userConfiguration, directory, fileName)
+  }
+
   private checkDirectory(directory: string): void {
     if (!this._userConfiguration.directories.includes(directory)) {
       throw new Error(`Invalid directory ${directory}`)

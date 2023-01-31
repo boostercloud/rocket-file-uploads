@@ -23,4 +23,11 @@ export interface RocketFilesProviderLibrary {
     rocketFilesUserConfiguration: RocketFilesUserConfiguration,
     directory: string
   ): Promise<Array<ListItem>>
+
+  deleteFile(
+    config: BoosterConfig, 
+    rocketFilesUserConfiguration: RocketFilesUserConfiguration, 
+    directory: string, 
+    fileName: string
+  ): Promise<boolean>
 }
