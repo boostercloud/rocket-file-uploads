@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-azure",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "File Uploads Booster Rocket Azure Integration Library",
   "keywords": [
     "Booster",
@@ -27,7 +27,7 @@
     "@azure/functions": "3.0.0",
     "@azure/identity": "3.0.0",
     "@azure/storage-blob": "^12.0.0",
-    "@boostercloud/rocket-file-uploads-types": "^1.0.26"
+    "@boostercloud/rocket-file-uploads-types": "^1.0.27"
   },
   "devDependencies": {
     "@boostercloud/metadata-booster": "1.4.1",
