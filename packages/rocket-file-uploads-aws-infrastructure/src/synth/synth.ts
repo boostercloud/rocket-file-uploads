@@ -1,10 +1,11 @@
 import { Effect, PolicyStatement } from '@aws-cdk/aws-iam'
-import { Bucket, HttpMethods } from '@aws-cdk/aws-s3'
-import { RemovalPolicy, Stack } from '@aws-cdk/core'
+import { Bucket, EventType, HttpMethods } from '@aws-cdk/aws-s3'
+import { Duration, RemovalPolicy, Stack } from '@aws-cdk/core'
 import { BoosterConfig } from '@boostercloud/framework-types'
-import { RocketFilesConfiguration } from '@boostercloud/rocket-file-uploads-types'
-import { Function } from '@aws-cdk/aws-lambda'
+import { functionID, RocketFilesConfiguration } from '@boostercloud/rocket-file-uploads-types'
 import { RocketUtils } from '@boostercloud/framework-provider-aws-infrastructure'
+import * as lambda from '@aws-cdk/aws-lambda'
+import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources'
 
 export const corsRules = [
   {
@@ -25,6 +26,23 @@ export const corsRules = [
   },
 ]
 
+function createLambda(
+  stack: Stack,
+  name: string,
+  config: BoosterConfig,
+  environment?: Record<string, string>
+): lambda.Function {
+  return new lambda.Function(stack, name, {
+    runtime: lambda.Runtime.NODEJS_14_X,
+    timeout: Duration.minutes(15),
+    memorySize: 1024,
+    handler: config.rocketDispatcherHandler,
+    functionName: name,
+    code: lambda.Code.fromAsset(config.userProjectRootPath),
+    environment,
+  })
+}
+
 export class Synth {
   public static mountStack(params: RocketFilesConfiguration, stack: Stack, config: BoosterConfig): void {
     params.userConfiguration.forEach((userConfig) => {
@@ -35,7 +53,7 @@ export class Synth {
         cors: corsRules,
       })
 
-      const eventsHandlerLambda = stack.node.tryFindChild('graphql-handler') as Function
+      const eventsHandlerLambda = stack.node.tryFindChild('graphql-handler') as lambda.Function
       eventsHandlerLambda.addToRolePolicy(
         new PolicyStatement({
           resources: [bucket.bucketArn, bucket.bucketArn + '/*'],
@@ -44,7 +62,15 @@ export class Synth {
         })
       )
 
-      // TODO: add a lambda that listens to the bucket and sends the events to Booster.
+      const fileTriggerFunction = createLambda(stack, `${bucketName}-s3-trigger`, config, {
+        BOOSTER_ROCKET_FUNCTION_ID: functionID,
+      })
+
+      console.log('***** Add event source listener to lambda')
+      const uploadEvent = new S3EventSource(bucket, {
+        events: [EventType.OBJECT_CREATED, EventType.OBJECT_REMOVED],
+      })
+      fileTriggerFunction.addEventSource(uploadEvent)
     })
   }
 
