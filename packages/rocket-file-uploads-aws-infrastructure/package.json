@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-aws-infrastructure",
-  "version": "1.0.31",
+  "version": "1.0.32",
   "description": "File Uploads Booster Rocket Aws Infrastructure Integration Library",
   "keywords": [
     "Booster",
@@ -26,11 +26,11 @@
   "dependencies": {
     "@aws-cdk/aws-iam": "^1.170.0",
     "@aws-cdk/aws-lambda": "^1.170.0",
+    "@aws-cdk/aws-lambda-event-sources": "^1.170.0",
     "@aws-cdk/aws-s3": "^1.170.0",
     "@aws-cdk/core": "^1.170.0",
-    "@aws-cdk/aws-lambda-event-sources": "^1.170.0",
-    "@boostercloud/rocket-file-uploads-types": "^1.0.31",
-    "@boostercloud/framework-types": "1.4.1"
+    "@boostercloud/framework-types": "1.4.1",
+    "@boostercloud/rocket-file-uploads-types": "^1.0.32"
   },
   "devDependencies": {
     "@boostercloud/framework-provider-aws-infrastructure": "1.4.1",
