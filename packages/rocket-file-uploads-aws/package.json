@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-aws",
-  "version": "1.0.50",
+  "version": "1.0.51",
   "description": "File Uploads Booster Rocket Aws Integration Library",
   "keywords": [
     "Booster",

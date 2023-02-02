@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-aws-infrastructure",
-  "version": "1.0.50",
+  "version": "1.0.51",
   "description": "File Uploads Booster Rocket Aws Infrastructure Integration Library",
   "keywords": [
     "Booster",
@@ -24,11 +24,11 @@
     "url": "git+https://github.com/boostercloud/rocket-files.git"
   },
   "dependencies": {
+    "@aws-cdk/aws-dynamodb": "^1.170.0",
     "@aws-cdk/aws-iam": "^1.170.0",
     "@aws-cdk/aws-lambda": "^1.170.0",
     "@aws-cdk/aws-lambda-event-sources": "^1.170.0",
     "@aws-cdk/aws-s3": "^1.170.0",
-    "@aws-cdk/aws-dynamodb": "^1.170.0",
     "@aws-cdk/core": "^1.170.0",
     "@boostercloud/framework-types": "1.4.1",
     "@boostercloud/rocket-file-uploads-types": "^1.0.50"
