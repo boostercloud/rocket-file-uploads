@@ -64,6 +64,8 @@ export class Synth {
 
       const fileTriggerFunction = createLambda(stack, `${bucketName}-s3-trigger`, config, {
         BOOSTER_ROCKET_FUNCTION_ID: functionID,
+        ...config.env,
+        BOOSTER_ENV: config.environmentName,
       })
 
       console.log('***** Add event source listener to lambda')
