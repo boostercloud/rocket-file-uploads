@@ -35,10 +35,9 @@ export function getMetadataFromRequest(request: unknown): AWSEvent {
   
 export function validateMetadata(configuration: RocketFilesUserConfiguration, metadata: AWSEvent): boolean {
   const fileLocation = metadata.s3.object.key
-  const containerPrefix = configuration.containerName.length > 0 ? `${configuration.containerName}/` : ``
-
+  
   const directoryFound = configuration.directories.find((directory: string) =>
-    fileLocation.startsWith(`${containerPrefix}${directory}`)
+    fileLocation.startsWith(directory)
   )
 
   if (!directoryFound) {
