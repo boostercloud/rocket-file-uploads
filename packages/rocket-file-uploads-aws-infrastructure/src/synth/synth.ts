@@ -6,6 +6,7 @@ import { functionID, RocketFilesConfiguration } from '@boostercloud/rocket-file-
 import { RocketUtils } from '@boostercloud/framework-provider-aws-infrastructure'
 import * as lambda from '@aws-cdk/aws-lambda'
 import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources'
+import { Table } from '@aws-cdk/aws-dynamodb'
 
 export const corsRules = [
   {
@@ -67,6 +68,17 @@ export class Synth {
         ...config.env,
         BOOSTER_ENV: config.environmentName,
       })
+
+      const eventsStore = stack.node.tryFindChild('events-store') as Table
+
+      console.log('***** Grant trigger lambda permissions to read/write/delete to DynamoDB')
+      fileTriggerFunction.addToRolePolicy(
+        new PolicyStatement({
+          resources: [eventsStore.tableArn],
+          actions: ['dynamodb:Put*'],
+          effect: Effect.ALLOW,
+        })
+      )
 
       console.log('***** Add event source listener to lambda')
       const uploadEvent = new S3EventSource(bucket, {
