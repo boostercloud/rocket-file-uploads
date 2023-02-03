@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-aws",
-  "version": "1.0.62",
+  "version": "1.0.63",
   "description": "File Uploads Booster Rocket Aws Integration Library",
   "keywords": [
     "Booster",
@@ -26,7 +26,7 @@
   "dependencies": {
     "@aws-cdk/aws-s3": "^1.170.0",
     "@aws-cdk/core": "^1.170.0",
-    "@boostercloud/rocket-file-uploads-types": "^1.0.62"
+    "@boostercloud/rocket-file-uploads-types": "^1.0.63"
   },
   "devDependencies": {
     "@boostercloud/metadata-booster": "1.4.1",
