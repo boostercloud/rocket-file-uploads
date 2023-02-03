@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-azure-infrastructure",
-  "version": "1.0.64",
+  "version": "1.0.65",
   "description": "File Uploads Booster Rocket Azure Infrastructure Library",
   "keywords": [
     "Booster",
@@ -24,7 +24,7 @@
     "url": "git+https://github.com/boostercloud/rocket-files.git"
   },
   "dependencies": {
-    "@boostercloud/rocket-file-uploads-types": "^1.0.64"
+    "@boostercloud/rocket-file-uploads-types": "^1.0.65"
   },
   "devDependencies": {
     "@boostercloud/framework-provider-azure-infrastructure": "1.4.1",
