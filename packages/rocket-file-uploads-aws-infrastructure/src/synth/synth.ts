@@ -74,7 +74,7 @@ export class Synth {
 
       // Add event source listener to lambda:
       const uploadEvent = new S3EventSource(bucket, {
-        events: [EventType.OBJECT_CREATED, EventType.OBJECT_REMOVED],
+        events: [EventType.OBJECT_CREATED],
       })
       fileTriggerFunction.addEventSource(uploadEvent)
 

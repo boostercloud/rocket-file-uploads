@@ -44,6 +44,6 @@ export function validateMetadata(configuration: RocketFilesUserConfiguration, me
   }
 
   const isValidEventType =
-    metadata.eventName.startsWith('ObjectCreated:') || metadata.eventName.startsWith('ObjectRemoved:')
+    metadata.eventName.startsWith('ObjectCreated:') // In case we implement the deletion case in the future, we could check too: metadata.eventName.startsWith('ObjectRemoved:')
   return isValidEventType
 }
