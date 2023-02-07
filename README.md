@@ -634,3 +634,8 @@ az role assignment create \
 ## Security
 
 Local Provider doesn't check `paths`. You should check that the `directory` and `files` passed as paratemers are valid.
+
+### TODOs:
+- Add file deletion to Azure and Local (only supported in AWS at the moment).
+- Optional storage deletion when unmounting the stack. 
+- Optional events, in case you don't want to store that information in the events-store.
