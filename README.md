@@ -639,3 +639,4 @@ Local Provider doesn't check `paths`. You should check that the `directory` and 
 - Add file deletion to Azure and Local (only supported in AWS at the moment).
 - Optional storage deletion when unmounting the stack. 
 - Optional events, in case you don't want to store that information in the events-store.
+- When deleting a file, save a deletion event in the events-store. Only uploads are stored at the moment.
