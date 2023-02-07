@@ -47,6 +47,7 @@ function createLambda(
 export class Synth {
   public static mountStack(params: RocketFilesConfiguration, stack: Stack, config: BoosterConfig): void {
     params.userConfiguration.forEach((userConfig) => {
+      // Create S3 bucket:
       const bucketName = userConfig.storageName + '-' + config.environmentName
       const bucket = new Bucket(stack, bucketName, {
         bucketName,
@@ -54,6 +55,7 @@ export class Synth {
         cors: corsRules,
       })
 
+      // Add Booster's GraphQL handler to the bucket's policy to allow it to read/write files:
       const eventsHandlerLambda = stack.node.tryFindChild('graphql-handler') as lambda.Function
       eventsHandlerLambda.addToRolePolicy(
         new PolicyStatement({
@@ -63,13 +65,14 @@ export class Synth {
         })
       )
 
+      // Create lambda to trigger on file upload/delete:
       const fileTriggerFunction = createLambda(stack, `${bucketName}-s3-trigger`, config, {
         BOOSTER_ROCKET_FUNCTION_ID: functionID,
         ...config.env,
         BOOSTER_ENV: config.environmentName,
       })
 
-      console.log('***** Add event source listener to lambda')
+      // Add event source listener to lambda:
       const uploadEvent = new S3EventSource(bucket, {
         events: [EventType.OBJECT_CREATED, EventType.OBJECT_REMOVED],
       })
@@ -77,7 +80,7 @@ export class Synth {
 
       const eventsStore = stack.node.tryFindChild('events-store') as Table
 
-      console.log('***** Grant trigger lambda permissions to read/write/delete to DynamoDB')
+      // Grant trigger lambda permissions to write to the events-store table in DynamoDB:
       fileTriggerFunction.addToRolePolicy(
         new PolicyStatement({
           resources: [eventsStore.tableArn],
@@ -89,6 +92,6 @@ export class Synth {
   }
 
   public static async unmountStack(_params: RocketFilesConfiguration, _utils: RocketUtils): Promise<void> {
-    //utils.s3.emptyBucket()
+    // TODO: optionally delete the bucket?
   }
 }
