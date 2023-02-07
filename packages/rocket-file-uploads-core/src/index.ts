@@ -54,9 +54,10 @@ export class BoosterRocketFiles {
   private register(configuration: RocketFilesConfiguration): void {
     const provider = require(configuration.rocketProviderPackage)
     this.config.registerRocketFunction(functionID, async (boosterConfig: BoosterConfig, request: unknown) => {
-      configuration.userConfiguration.forEach((userConf) => {
+      const operations = configuration.userConfiguration.map((userConf) => {
         return fileUploaded(boosterConfig, request, userConf, provider)
       })
+      await Promise.all(operations)
     })
   }
 

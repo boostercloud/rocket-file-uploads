@@ -69,6 +69,12 @@ export class Synth {
         BOOSTER_ENV: config.environmentName,
       })
 
+      console.log('***** Add event source listener to lambda')
+      const uploadEvent = new S3EventSource(bucket, {
+        events: [EventType.OBJECT_CREATED, EventType.OBJECT_REMOVED],
+      })
+      fileTriggerFunction.addEventSource(uploadEvent)
+
       const eventsStore = stack.node.tryFindChild('events-store') as Table
 
       console.log('***** Grant trigger lambda permissions to read/write/delete to DynamoDB')
@@ -79,12 +85,6 @@ export class Synth {
           effect: Effect.ALLOW,
         })
       )
-
-      console.log('***** Add event source listener to lambda')
-      const uploadEvent = new S3EventSource(bucket, {
-        events: [EventType.OBJECT_CREATED, EventType.OBJECT_REMOVED],
-      })
-      fileTriggerFunction.addEventSource(uploadEvent)
     })
   }
 
