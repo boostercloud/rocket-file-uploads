@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-local-infrastructure",
-  "version": "1.0.73",
+  "version": "1.0.0",
   "description": "File Uploads Booster Rocket Local Infrastructure Library",
   "keywords": [
     "Booster",

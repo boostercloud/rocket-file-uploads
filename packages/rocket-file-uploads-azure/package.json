@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-azure",
-  "version": "1.0.73",
+  "version": "1.0.0",
   "description": "File Uploads Booster Rocket Azure Integration Library",
   "keywords": [
     "Booster",
