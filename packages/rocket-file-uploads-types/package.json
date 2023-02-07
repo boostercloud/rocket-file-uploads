@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-types",
-  "version": "1.0.70",
+  "version": "1.0.71",
   "description": "File Uploads Booster Rocket Common Types Library",
   "keywords": [
     "Booster",
@@ -37,5 +37,5 @@
   "bugs": {
     "url": "https://github.com/boostercloud/rocket-files/issues"
   },
-  "gitHead": "28385315fe6562ce3c269c7a947c7bbf058d0961"
+  "gitHead": "8adfae0134d192108ff3a60c6e73abedb5e1ada9"
 }
