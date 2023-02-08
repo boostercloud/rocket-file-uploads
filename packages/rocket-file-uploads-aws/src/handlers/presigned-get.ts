@@ -8,7 +8,6 @@ export async function presignedGet(
   directory: string,
   fileName: string
 ): Promise<string> {
-  const s3 = new AWS.S3()
   const bucketName = rocketFilesUserConfiguration.storageName + '-' + config.environmentName
   const params = {
     Bucket: bucketName,

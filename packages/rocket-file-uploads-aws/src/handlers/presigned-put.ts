@@ -1,6 +1,5 @@
 import { BoosterConfig } from '@boostercloud/framework-types'
 import { RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-types'
-import * as AWS from 'aws-sdk'
 
 export async function presignedPut(
   config: BoosterConfig,
@@ -8,7 +7,6 @@ export async function presignedPut(
   directory: string,
   fileName: string
 ): Promise<any> {
-  const s3 = new AWS.S3()
   const bucketName = rocketFilesUserConfiguration.storageName + '-' + config.environmentName
   const params = {
     Bucket: bucketName,

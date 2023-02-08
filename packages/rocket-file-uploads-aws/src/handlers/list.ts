@@ -7,8 +7,6 @@ export async function list(
     rocketFilesUserConfiguration: RocketFilesUserConfiguration,
     directory: string
   ): Promise<Array<ListItem>> {
-
-    const s3 = new AWS.S3()
     const bucketName = rocketFilesUserConfiguration.storageName + '-' + config.environmentName
     const params = {
         Bucket: bucketName,
