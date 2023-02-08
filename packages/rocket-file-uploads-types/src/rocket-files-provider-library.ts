@@ -10,13 +10,12 @@ export interface RocketFilesProviderLibrary {
     fileName: string
   ): Promise<string>
 
-  /// IMPORTANT: The Promise needs, too, <any> instead of <string> as the return type because of AWS.
   presignedPut(
     config: BoosterConfig,
     rocketFilesUserConfiguration: RocketFilesUserConfiguration,
     directory: string,
     fileName: string
-  ): Promise<string> | Promise<any>
+  ): Promise<unknown>
 
   list(
     config: BoosterConfig,

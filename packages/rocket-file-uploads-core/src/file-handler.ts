@@ -7,6 +7,8 @@ import {
   RocketFilesUserConfiguration,
 } from '@boostercloud/rocket-file-uploads-types'
 
+const infraPackages = ['azure', 'local', 'aws'].map((s) => `@boostercloud/rocket-file-uploads-${s}-infrastructure`)
+
 export class FileHandler {
   private _provider: RocketFilesProviderLibrary
   private _rocket: RocketDescriptor
@@ -47,12 +49,8 @@ export class FileHandler {
   }
 
   private static getRocketFromConfiguration(config: BoosterConfig): RocketDescriptor {
-    const rocketDescriptor = config.rockets?.find(
-      (rocket) =>
-        rocket.packageName == '@boostercloud/rocket-file-uploads-azure-infrastructure' ||
-        rocket.packageName == '@boostercloud/rocket-file-uploads-local-infrastructure' ||
-        rocket.packageName == '@boostercloud/rocket-file-uploads-aws-infrastructure'
-    ) as RocketDescriptor
+    const rocketDescriptor = config.rockets?.find((rocket) => infraPackages.includes(rocket.packageName)) as RocketDescriptor
+
     if (!rocketDescriptor) {
       throw new Error('Rocket not found. Please make sure you have setup the rocket packageName correctly')
     }

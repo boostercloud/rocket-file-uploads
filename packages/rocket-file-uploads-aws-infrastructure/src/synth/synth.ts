@@ -10,7 +10,7 @@ import { Table } from '@aws-cdk/aws-dynamodb'
 
 export const corsRules = [
   {
-    allowedMethods: [HttpMethods.GET, HttpMethods.PUT, HttpMethods.POST, HttpMethods.DELETE, HttpMethods.HEAD],
+    allowedMethods: [HttpMethods.POST],
     allowedOrigins: ['*'],
     allowedHeaders: [
       'Access-Control-Allow-Headers',
