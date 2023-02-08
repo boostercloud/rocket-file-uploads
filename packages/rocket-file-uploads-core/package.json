@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-core",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "File Uploads Booster Rocket Core Package",
   "keywords": [
     "Booster",
@@ -24,7 +24,7 @@
     "url": "git+https://github.com/boostercloud/rocket-files.git"
   },
   "dependencies": {
-    "@boostercloud/rocket-file-uploads-types": "^1.0.2"
+    "@boostercloud/rocket-file-uploads-types": "^1.0.0"
   },
   "devDependencies": {
     "@boostercloud/metadata-booster": "1.4.1",
