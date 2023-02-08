@@ -16,5 +16,5 @@ export async function deleteFile(
   }
   
   const result = await s3.deleteObject(params).promise()
-  return result.$response.error == null
+  return Boolean(result.$response.error) === false
 }
