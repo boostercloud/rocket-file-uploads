@@ -1,6 +1,6 @@
 import { BoosterConfig } from '@boostercloud/framework-types'
 import { ListItem, ListItemProperties, RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-types'
-import * as AWS from 'aws-sdk'
+import { s3 } from '../common'
 
 export async function list(
     config: BoosterConfig,

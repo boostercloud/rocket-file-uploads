@@ -1,5 +1,6 @@
 import { BoosterConfig } from '@boostercloud/framework-types'
 import { RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-types'
+import { s3 } from '../common'
 
 export async function presignedPut(
   config: BoosterConfig,
