@@ -28,9 +28,13 @@ interface AWSEvent {
   s3: AWSEventS3
 }
 
-export function getMetadataFromRequest(request: unknown): AWSEvent {
-  const events = (request as any)['Records'] as Array<AWSEvent>
-  return events[0]
+export function getMetadataFromRequest(request: { Records: Array<AWSEvent> }): AWSEvent {
+  const metadata = request.Records?.[0]
+  
+  if (!metadata) {
+    throw new Error('Metadata arrived empty in the request records')
+  }
+  return metadata
 }
 
 export function validateMetadata(configuration: RocketFilesUserConfiguration, metadata: AWSEvent): boolean {
