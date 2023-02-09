@@ -9,15 +9,25 @@ export interface RocketFilesProviderLibrary {
     directory: string,
     fileName: string
   ): Promise<string>
+
   presignedPut(
     config: BoosterConfig,
     rocketFilesUserConfiguration: RocketFilesUserConfiguration,
     directory: string,
     fileName: string
-  ): Promise<string>
+  ): Promise<unknown>
+
   list(
     config: BoosterConfig,
     rocketFilesUserConfiguration: RocketFilesUserConfiguration,
     directory: string
   ): Promise<Array<ListItem>>
+
+  /// Only supported in AWS at the moment.
+  deleteFile(
+    config: BoosterConfig, 
+    rocketFilesUserConfiguration: RocketFilesUserConfiguration, 
+    directory: string, 
+    fileName: string
+  ): Promise<boolean>
 }

@@ -5,6 +5,7 @@ This package is a configurable rocket to add a storage API to your Booster appli
 ## Supported Providers
 
 - Azure Provider
+- AWS Provider
 - Local Provider
 
 ## Overview
@@ -14,13 +15,11 @@ This rocket provides some methods to access files stores in your cloud provider:
 - `presignedPut`: Returns a presigned put url and the necessary form params. With this url files can be uploaded directly to your provider.
 - `presignedGet`: Returns a presigned get url to download a file. With this url files can be downloaded directly from your provider.
 - `list`: Returns a list of files stored in the provider.
+- `deleteFile`: Removes a file from a directory (only supported in AWS at the moment).
 
 These methods may be used from a Command in your project secured via JWT Token.
 
 This rocket also provides a Booster Event each time a file is uploaded.
-
-> [!NOTE] Starting at version 0.31.0 this Rocket use **Managed Identities** instead of **Connection Strings**. Please, 
-> check that you have the required permissions to assign roles https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal-managed-identity#prerequisites
 
 ## Usage
 
@@ -32,30 +31,42 @@ npm install --save @boostercloud/rocket-file-uploads-core @boostercloud/rocket-f
 
 Depending on your provider you could need some of the following **dependency** packages:
 
-_Local Provider:_
-
-```bash
-npm install --save @boostercloud/rocket-file-uploads-local
-```
-
 _Azure Provider:_
 
 ```bash
 npm install --save @boostercloud/rocket-file-uploads-azure
 ```
 
-Also, you will need a **devDependency** in your project, depending on your provider:
+_AWS Provider:_
+
+```bash
+npm install --save @boostercloud/rocket-file-uploads-aws
+```
 
 _Local Provider:_
 
 ```bash
-npm install --save-dev @boostercloud/rocket-file-uploads-local-infrastructure
+npm install --save @boostercloud/rocket-file-uploads-local
 ```
+
+Also, you will need a **devDependency** in your project, depending on your provider:
 
 _Azure Provider_
 
 ```bash
 npm install --save-dev @boostercloud/rocket-file-uploads-azure-infrastructure
+```
+
+_AWS Provider_
+
+```bash
+npm install --save-dev @boostercloud/rocket-file-uploads-aws-infrastructure
+```
+
+_Local Provider:_
+
+```bash
+npm install --save-dev @boostercloud/rocket-file-uploads-local-infrastructure
 ```
 
 In your Booster config file, configure your `BoosterRocketFiles`:
@@ -68,7 +79,7 @@ import { RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-
 
 const rocketFilesConfigurationDefault: RocketFilesUserConfiguration = {
   storageName: 'clientst',
-  containerName: 'rocketfiles',
+  containerName: 'rocketfiles', // Not used in AWS (you can just pass '' in this case)
   directories: ['client1', 'client2'],
 }
 
@@ -80,6 +91,7 @@ const rocketFilesConfigurationCms: RocketFilesUserConfiguration = {
 
 const APP_NAME = 'test'
 
+// Azure Config:
 Booster.configure('production', (config: BoosterConfig): void => {
   config.appName = APP_NAME
   config.providerPackage = '@boostercloud/framework-provider-azure'
@@ -88,6 +100,16 @@ Booster.configure('production', (config: BoosterConfig): void => {
   ]
 })
 
+// AWS Config:
+Booster.configure('production', (config: BoosterConfig): void => {
+  config.appName = APP_NAME
+  config.providerPackage = '@boostercloud/framework-provider-aws'
+  config.rockets = [
+    new BoosterRocketFiles(config, [rocketFilesConfigurationDefault, rocketFilesConfigurationCms]).rocketForAWS(),
+  ]
+})
+
+// Local Config:
 Booster.configure('local', (config: BoosterConfig): void => {
   config.appName = APP_NAME
   config.providerPackage = '@boostercloud/framework-provider-local'
@@ -101,13 +123,13 @@ Booster.configure('local', (config: BoosterConfig): void => {
 Available parameters are:
 
 - `storageName`: Name of the storage repository.
-- `containerName`: Directories container
+- `containerName`: Directories container (not used in AWS).
 - `directories` A list of folders where the files will be stored
 
 > [!NOTE] Azure Provider will use `storageName` as the **Storage Account Name**. 
 > Local Provider will use it as the **root folder name**
 
-The structure created will be:
+The structure created for Azure and the Local Provider will be:
 >    * storage
 >        * container
 >            * directory
@@ -116,8 +138,14 @@ The structure created will be:
 > http://localhost:3000/storageName/containerName/filename.ext but for Azure:
 > http://storageAccountUrl:3000/containerName/filename.ext
 
+The `container` parameter is **not used** in AWS, so the structure created will be:
+>    * storage
+>       * directory
+
 
 ### PresignedPut Usage
+
+#### Azure &  Local
 
 Create a command in your application and call the `presignedPut` method on the FileHandler class with the `directory` and `filename` you want to upload on the storage.
 
@@ -166,6 +194,7 @@ This returns the following payload:
 ```
 
 Note: For Local Provider, the url will be simpler:
+
 ```json
 {
   "data": {
@@ -216,6 +245,76 @@ Local Provider will write files on `.<storageName>/rocketfiles` folder
 
 **Note**: Azure will return a 201 status but Local will return a 200
 
+#### AWS
+
+Create a command in your application and call the `presignedGet` method on the FileHandler class with the `directory` and `filename` you want to get on the storage.
+
+The `storageName` parameter is optional. It will use the first storage if undefined.
+
+```typescript
+import { Booster, Command } from '@boostercloud/framework-core'
+import { Register } from '@boostercloud/framework-types'
+import { FileHandler } from '@boostercloud/rocket-file-uploads-core'
+
+// AWS returns these fields in the response:
+export class PresignedPostResponse {
+  public constructor(
+    readonly url: string,
+    readonly fields: { [key: string]: string }
+  ){}
+}
+
+@Command({
+  authorize: 'all', // Add an authentiation role as needed.
+})
+export class FileUploadGet {
+  public constructor(readonly directory: string, readonly fileName: string, readonly storageName?: string) {}
+
+  public static async handle(command: FileUploadGet, register: Register): Promise<PresignedPostResponse> {
+    const boosterConfig = Booster.config
+    const fileHandler = new FileHandler(boosterConfig, command.storageName)
+    return await fileHandler.presignedGet(command.directory, command.fileName)
+  }
+}
+```
+
+GraphQL mutation example:
+
+```
+mutation {
+  FileUploadPut(input: { 
+    directory: "files", 
+    fileName: "lol.jpg"
+  }) {
+    url
+    fields
+  }
+}
+```
+
+
+AWS Response:
+
+```
+{
+  "data": {
+    "FileUploadPut": {
+      "url": "https://s3.eu-west-1.amazonaws.com/myappstorage",
+      "fields": {
+        "Key": "files/lol.jpg",
+        "bucket": "myappstorage",
+        "X-Amz-Algorithm": "AWS4-HMAC-SHA256",
+        "X-Amz-Credential": "blablabla.../eu-west-1/s3/aws4_request",
+        "X-Amz-Date": "20230207T142138Z",
+        "X-Amz-Security-Token": "IQoJb3JpZ2... blablabla",
+        "Policy": "eyJleHBpcmF0a... blablabla",
+        "X-Amz-Signature": "60511... blablabla"
+      }
+    }
+  }
+}
+```
+
 ### PresignedGet Usage
 
 Create a command in your application and call the `presignedGet` method on the FileHandler class with the `directory` and `filename` you want to get on the storage.
@@ -265,6 +364,7 @@ This returns the following payload:
 ```
 
 NOTE: For Local Provider, the url will be simpler:
+
 ```json
 {
   "data": {
@@ -318,7 +418,7 @@ mutation {
 }
 ```
 
-This returns the following payload:
+This returns the following payload in Azure and AWS:
 
 ```json
 {
@@ -338,7 +438,7 @@ This returns the following payload:
 }
 ```
 
-Local Provider:
+Local Provider payload:
 
 ```json
 {
@@ -384,11 +484,13 @@ export class UploadedFileEntityReadModel {
 Mutation example:
 
 ```graphql
-query{
-    ListUploadedFileEntityReadModels(filter: {}){
-        id
-        metadata
+query {
+  ListUploadedFileReadModels(filter: {}) {
+    items {
+      id
+      metadata
     }
+  }
 }
 ```
 
@@ -397,67 +499,12 @@ This returns the following payload:
 ```json
 {
   "data": {
-    "ListUploadedFileEntityReadModels": {
+    "ListUploadedFileReadModels": {
       "items": [
         {
           "id": "f119ef635226888dd1bacd734f8955db",
       "metadata": {
-            "invocationId": "99eff710-54bb-4c44-827b-154ce43c70bc",
-            "blobTrigger": "rocketfiles/client1/myfile.txt",
-            "uri": "https://clientst/rocketfiles/client1/myfile.txt",
-        "properties": {
-              "lastModified": "2022-09-29T10:42:39+00:00",
-              "createdOn": "2022-09-29T10:42:39+00:00",
-              "metadata": {},
-              "objectReplicationDestinationPolicyId": null,
-              "objectReplicationSourceProperties": null,
-              "blobType": 0,
-              "copyCompletedOn": "0001-01-01T00:00:00+00:00",
-              "copyStatusDescription": null,
-              "copyId": null,
-              "copyProgress": null,
-              "copySource": null,
-              "copyStatus": 0,
-              "blobCopyStatus": null,
-              "isIncrementalCopy": false,
-              "destinationSnapshot": null,
-              "leaseDuration": 0,
-              "leaseState": 0,
-              "leaseStatus": 1,
-              "contentLength": 11,
-              "contentType": "text/plain",
-              "eTag": {},
-              "contentHash": "Ej+7bbuBEYwNXlItWUn36w==",
-          "contentEncoding": null,
-              "contentDisposition": null,
-          "contentLanguage": null,
-              "cacheControl": null,
-              "blobSequenceNumber": 0,
-              "acceptRanges": "bytes",
-              "blobCommittedBlockCount": 0,
-          "isServerEncrypted": true,
-              "encryptionKeySha256": null,
-              "encryptionScope": null,
-              "accessTier": "Hot",
-              "accessTierInferred": true,
-              "archiveStatus": null,
-              "accessTierChangedOn": "0001-01-01T00:00:00+00:00",
-              "versionId": null,
-              "isLatestVersion": false,
-              "tagCount": 0,
-              "expiresOn": "0001-01-01T00:00:00+00:00",
-              "isSealed": false,
-              "rehydratePriority": null,
-              "lastAccessed": "0001-01-01T00:00:00+00:00",
-              "immutabilityPolicy": {
-                "expiresOn": null,
-                "policyMode": null
-              },
-              "hasLegalHold": false
-        },
-        "metadata": {},
-            "name": "client1/myfile.txt"
-          }
+      		// A bunch of fields (depending on Azure or AWS) 
         }
       ],
       "count": 1,
@@ -471,7 +518,7 @@ This returns the following payload:
 
 For Local
 
-```shell
+```json
 {
   "data": {
     "ListUploadedFileEntityReadModels": {
@@ -497,7 +544,7 @@ For Local
 
 For each upload file a new event will be generated.
 
-On Azure the event will be like this:
+On Azure and AWS, the event will be like this:
 
 ```json
 {
@@ -511,61 +558,7 @@ On Azure the event will be like this:
   "value": {
     "id": "xxx",
     "metadata": {
-      "invocationId": "xxx",
-      "blobTrigger": "rocketfiles/client1/myfile.txt",
-      "uri": "https://clientst.blob.core.windows.net/rocketfiles/client1/myfile.txt",
-      "properties": {
-        "lastModified": "2022-10-26T10:23:20+00:00",
-        "createdOn": "2022-10-26T10:23:20+00:00",
-        "metadata": {},
-        "objectReplicationDestinationPolicyId": null,
-        "objectReplicationSourceProperties": null,
-        "blobType": 0,
-        "copyCompletedOn": "0001-01-01T00:00:00+00:00",
-        "copyStatusDescription": null,
-        "copyId": null,
-        "copyProgress": null,
-        "copySource": null,
-        "copyStatus": 0,
-        "blobCopyStatus": null,
-        "isIncrementalCopy": false,
-        "destinationSnapshot": null,
-        "leaseDuration": 0,
-        "leaseState": 0,
-        "leaseStatus": 1,
-        "contentLength": 6,
-        "contentType": "text/plain",
-        "eTag": {},
-        "contentHash": "YmCOCK3Cmo1tvJdU5lnxJQ==",
-        "contentEncoding": null,
-        "contentDisposition": null,
-        "contentLanguage": null,
-        "cacheControl": null,
-        "blobSequenceNumber": 0,
-        "acceptRanges": "bytes",
-        "blobCommittedBlockCount": 0,
-        "isServerEncrypted": true,
-        "encryptionKeySha256": null,
-        "encryptionScope": null,
-        "accessTier": "Hot",
-        "accessTierInferred": true,
-        "archiveStatus": null,
-        "accessTierChangedOn": "0001-01-01T00:00:00+00:00",
-        "versionId": null,
-        "isLatestVersion": false,
-        "tagCount": 0,
-        "expiresOn": "0001-01-01T00:00:00+00:00",
-        "isSealed": false,
-        "rehydratePriority": null,
-        "lastAccessed": "0001-01-01T00:00:00+00:00",
-        "immutabilityPolicy": {
-          "expiresOn": null,
-          "policyMode": null
-        },
-        "hasLegalHold": false
-      },
-      "metadata": {},
-      "name": "client1/myfile.txt"
+      // A bunch of fields (depending on Azure or AWS)
     }
   },
   "createdAt": "2022-10-26T10:23:36.562Z",
@@ -606,6 +599,9 @@ On Local, the event will be:
 
 ## Azure Roles
 
+> [!NOTE] Starting at version 0.31.0 this Rocket use **Managed Identities** instead of **Connection Strings**. Please, 
+> check that you have the required permissions to assign roles https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal-managed-identity#prerequisites
+
 For uploading files to Azure you need the `Storage Blob Data Contributor` role. This can be assigned to a user using the portal or with the next scripts:
 
 First, check if you have the correct permissions:
@@ -638,3 +634,9 @@ az role assignment create \
 ## Security
 
 Local Provider doesn't check `paths`. You should check that the `directory` and `files` passed as paratemers are valid.
+
+### TODOs:
+- Add file deletion to Azure and Local (only supported in AWS at the moment).
+- Optional storage deletion when unmounting the stack. 
+- Optional events, in case you don't want to store that information in the events-store.
+- When deleting a file, save a deletion event in the events-store. Only uploads are stored at the moment.
