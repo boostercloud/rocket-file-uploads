@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-azure",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "File Uploads Booster Rocket Azure Integration Library",
   "keywords": [
     "Booster",
@@ -27,7 +27,7 @@
     "@azure/functions": "3.0.0",
     "@azure/identity": "3.0.0",
     "@azure/storage-blob": "^12.0.0",
-    "@boostercloud/rocket-file-uploads-types": "^1.0.2"
+    "@boostercloud/rocket-file-uploads-types": "^1.1.0"
   },
   "devDependencies": {
     "@boostercloud/metadata-booster": "1.4.1",
@@ -50,5 +50,5 @@
   "bugs": {
     "url": "https://github.com/boostercloud/rocket-files/issues"
   },
-  "gitHead": "4b191d159c2f66a8518adc9da25f9e53c3f98cb9"
+  "gitHead": "b14d1df235dfd5b22897ac4d379fd6f53a646af2"
 }
