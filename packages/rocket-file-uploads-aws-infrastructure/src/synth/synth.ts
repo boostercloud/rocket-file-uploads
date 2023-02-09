@@ -65,6 +65,18 @@ export class Synth {
         })
       )
 
+      // Add Booster's 'events-main' lambda to the bucket's policy to allow it to read files. 
+      // This is useful, for example, if you need to do extra work in a Booster event handler:
+      const readHandlerLambda = stack.node.tryFindChild('events-main') as lambda.Function
+      readHandlerLambda.addToRolePolicy(
+        new PolicyStatement({
+          resources: [bucket.bucketArn, bucket.bucketArn + '/*'],
+          actions: ['s3:GetObject'],
+          effect: Effect.ALLOW,
+        })
+      )
+
+
       // Create lambda to trigger on file upload/delete:
       const fileTriggerFunction = createLambda(stack, `${bucketName}-s3-trigger`, config, {
         BOOSTER_ROCKET_FUNCTION_ID: functionID,
