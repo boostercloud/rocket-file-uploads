@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-aws-infrastructure",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "File Uploads Booster Rocket Aws Infrastructure Integration Library",
   "keywords": [
     "Booster",
@@ -31,7 +31,7 @@
     "@aws-cdk/aws-s3": "^1.170.0",
     "@aws-cdk/core": "^1.170.0",
     "@boostercloud/framework-types": "1.4.1",
-    "@boostercloud/rocket-file-uploads-types": "^1.0.1"
+    "@boostercloud/rocket-file-uploads-types": "^1.0.2"
   },
   "devDependencies": {
     "@boostercloud/framework-provider-aws-infrastructure": "1.4.1",
@@ -56,5 +56,5 @@
   "bugs": {
     "url": "https://github.com/boostercloud/rocket-files/issues"
   },
-  "gitHead": "a8e57a873a87e02dc999ff6008bdbbee1b1681ed"
+  "gitHead": "4b191d159c2f66a8518adc9da25f9e53c3f98cb9"
 }
