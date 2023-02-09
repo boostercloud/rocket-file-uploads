@@ -56,8 +56,8 @@ export class Synth {
       })
 
       // Add Booster's GraphQL handler to the bucket's policy to allow it to read/write files:
-      const eventsHandlerLambda = stack.node.tryFindChild('graphql-handler') as lambda.Function
-      eventsHandlerLambda.addToRolePolicy(
+      const graphqlHandlerLambda = stack.node.tryFindChild('graphql-handler') as lambda.Function
+      graphqlHandlerLambda.addToRolePolicy(
         new PolicyStatement({
           resources: [bucket.bucketArn, bucket.bucketArn + '/*'],
           actions: ['s3:*'],
@@ -67,11 +67,11 @@ export class Synth {
 
       // Add Booster's 'events-main' lambda to the bucket's policy to allow it to read files. 
       // This is useful, for example, if you need to do extra work in a Booster event handler:
-      const readHandlerLambda = stack.node.tryFindChild('events-main') as lambda.Function
-      readHandlerLambda.addToRolePolicy(
+      const eventsHandlerLambda = stack.node.tryFindChild('events-main') as lambda.Function
+      eventsHandlerLambda.addToRolePolicy(
         new PolicyStatement({
           resources: [bucket.bucketArn, bucket.bucketArn + '/*'],
-          actions: ['s3:GetObject'],
+          actions: ['s3:GetObject', 's3:DeleteObject'],
           effect: Effect.ALLOW,
         })
       )
@@ -85,8 +85,10 @@ export class Synth {
       })
 
       // Add event source listener to lambda:
+      // WARNING: If you ever add EventType.OBJECT_REMOVED, check if that could cause an infinite loop if the eventsHandlerLambda deletes the file
+      // because that will create a new Booster event that will trigger the eventsHandlerLambda again (or if we add s3:PutObject to the eventsHandlerLambda)
       const uploadEvent = new S3EventSource(bucket, {
-        events: [EventType.OBJECT_CREATED],
+        events: [EventType.OBJECT_CREATED], 
       })
       fileTriggerFunction.addEventSource(uploadEvent)
 
