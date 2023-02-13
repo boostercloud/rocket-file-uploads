@@ -31,7 +31,7 @@
     "@aws-cdk/aws-s3": "^1.170.0",
     "@aws-cdk/core": "^1.170.0",
     "@boostercloud/framework-types": "1.4.1",
-    "@boostercloud/rocket-file-uploads-types": "^1.0.0"
+    "@boostercloud/rocket-file-uploads-types": "^1.2.0"
   },
   "devDependencies": {
     "@boostercloud/framework-provider-aws-infrastructure": "1.4.1",
