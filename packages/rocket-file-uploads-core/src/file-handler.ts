@@ -49,7 +49,9 @@ export class FileHandler {
   }
 
   private static getRocketFromConfiguration(config: BoosterConfig): RocketDescriptor {
-    const rocketDescriptor = config.rockets?.find((rocket) => infraPackages.includes(rocket.packageName)) as RocketDescriptor
+    const rocketDescriptor = config.rockets?.find((rocket) =>
+      infraPackages.includes(rocket.packageName)
+    ) as RocketDescriptor
 
     if (!rocketDescriptor) {
       throw new Error('Rocket not found. Please make sure you have setup the rocket packageName correctly')
