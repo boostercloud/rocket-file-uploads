@@ -5,6 +5,7 @@ import { TerraformFunctionApp } from './terraform-function-app'
 import { TerraformStorageAccount } from './terraform-storage-account'
 import { TerraformStorageContainer } from './terraform-storage-container'
 import { TerraformRoleAssignment } from './terraform-role-assignment'
+import { TerraformStack } from 'cdktf'
 
 export class Synth {
   public static mountStack(
@@ -14,9 +15,10 @@ export class Synth {
     utils: RocketUtils
   ): ApplicationSynthStack {
     const appPrefix = applicationSynthStack.appPrefix
-    const terraformStack = applicationSynthStack.terraformStack
+    const terraformStackResource = applicationSynthStack.terraformStack as TerraformStack
     const resourceGroup = applicationSynthStack.resourceGroup!
     const rocketStack = applicationSynthStack.rocketStack ?? []
+    const azurermProvider = applicationSynthStack.azureProvider!
 
     applicationSynthStack.functionApp!.addOverride('identity', {
       type: 'SystemAssigned',
@@ -26,7 +28,8 @@ export class Synth {
     const rocketStoragesIds: Array<string> = []
     configuration.userConfiguration.forEach((userConfiguration) => {
       const rocketStorage = TerraformStorageAccount.build(
-        terraformStack,
+        azurermProvider,
+        terraformStackResource,
         resourceGroup,
         appPrefix,
         utils,
@@ -36,7 +39,8 @@ export class Synth {
       rocketStoragesIds.push(rocketStorage.id)
 
       const blobContainer = TerraformStorageContainer.build(
-        terraformStack,
+        azurermProvider,
+        terraformStackResource,
         appPrefix,
         rocketStorage,
         userConfiguration.containerName,
@@ -51,7 +55,8 @@ export class Synth {
     })
 
     const rocketFunctionApp = TerraformFunctionApp.build(
-      terraformStack,
+      azurermProvider,
+      terraformStackResource,
       applicationSynthStack,
       config,
       utils,
@@ -60,14 +65,16 @@ export class Synth {
 
     rocketStoragesIds.forEach((id) => {
       const rocketRoles = TerraformRoleAssignment.build(
-        terraformStack,
+        azurermProvider,
+        terraformStackResource,
         applicationSynthStack,
         utils,
         id,
         rocketFunctionApp
       )
       const appRoles = TerraformRoleAssignment.build(
-        terraformStack,
+        azurermProvider,
+        terraformStackResource,
         applicationSynthStack,
         utils,
         id,

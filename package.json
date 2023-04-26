@@ -6,7 +6,7 @@
     "clean-compile": "lerna run clean && lerna clean --yes && lerna bootstrap && lerna run compile"
   },
   "devDependencies": {
-    "@boostercloud/metadata-booster": "1.4.1",
+    "@boostercloud/metadata-booster": "1.9.0",
     "@types/jsonwebtoken": "^8.5.9",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",

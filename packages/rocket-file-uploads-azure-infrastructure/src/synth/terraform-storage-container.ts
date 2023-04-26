@@ -1,20 +1,23 @@
 import { TerraformStack } from 'cdktf'
-import { StorageAccount, StorageContainer } from '@cdktf/provider-azurerm'
+import { storageAccount, storageContainer } from '@cdktf/provider-azurerm'
 import { RocketUtils } from '@boostercloud/framework-provider-azure-infrastructure'
+import { AzurermProvider } from '@cdktf/provider-azurerm/lib/provider'
 
 export class TerraformStorageContainer {
   static build(
-    terraformStack: TerraformStack,
+    providerResource: AzurermProvider,
+    terraformStackResource: TerraformStack,
     appPrefix: string,
-    rocketStorageAccount: StorageAccount,
+    rocketStorageAccountResource: storageAccount.StorageAccount,
     containerName: string,
     utils: RocketUtils
-  ): StorageContainer {
-    const id = utils.toTerraformName(rocketStorageAccount.name, `rfsb${containerName}`)
-    return new StorageContainer(terraformStack, id, {
+  ): storageContainer.StorageContainer {
+    const id = utils.toTerraformName(rocketStorageAccountResource.name, `rfsb${containerName}`)
+    return new storageContainer.StorageContainer(terraformStackResource, id, {
       name: containerName,
-      storageAccountName: rocketStorageAccount.name,
+      storageAccountName: rocketStorageAccountResource.name,
       containerAccessType: 'private',
+      provider: providerResource,
     })
   }
 }
