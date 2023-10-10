@@ -43,7 +43,9 @@ export class FileHandler {
   }
 
   private checkDirectory(directory: string): void {
-    if (!this._userConfiguration.directories.includes(directory)) {
+    const directoryFound = this._userConfiguration.directories.find((dir: string) => directory.startsWith(`${dir}`))
+
+    if (!directoryFound) {
       throw new Error(`Invalid directory ${directory}`)
     }
   }
