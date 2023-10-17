@@ -15,12 +15,12 @@ export class Infra {
     const port = infrastructureRocketMetadata?.port ?? 3000
     process.env[LOCAL_PORT_ENV] = port.toString()
     rocketFilesConfiguration.userConfiguration.forEach((userConfiguration) => {
+      fsWatch(userConfiguration.storageName, userConfiguration.containerName, port, userConfiguration.directories)
       userConfiguration.directories.forEach((directory: string) => {
         router.use(
           `/${userConfiguration.storageName}/${userConfiguration.containerName}`,
           new FileController(userConfiguration.storageName, userConfiguration.containerName, directory).router
         )
-        fsWatch(userConfiguration.storageName, userConfiguration.containerName, directory, port)
       })
     })
   }

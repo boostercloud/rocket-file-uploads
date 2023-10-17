@@ -5,9 +5,10 @@ import {
   RocketFilesConfiguration,
   RocketFilesProviderLibrary,
   RocketFilesUserConfiguration,
+  isValidDirectory,
 } from '@boostercloud/rocket-file-uploads-types'
 
-const infraPackages = ['azure', 'local', 'aws'].map((s) => `@boostercloud/rocket-file-uploads-${s}-infrastructure`)
+const infraPackages = ['azure', 'local'].map((s) => `@boostercloud/rocket-file-uploads-${s}-infrastructure`)
 
 export class FileHandler {
   private _provider: RocketFilesProviderLibrary
@@ -37,13 +38,8 @@ export class FileHandler {
     return this._provider.list(this.config, this._userConfiguration, directory)
   }
 
-  public deleteFile(directory: string, fileName: string): Promise<boolean> {
-    this.checkDirectory(directory)
-    return this._provider.deleteFile(this.config, this._userConfiguration, directory, fileName)
-  }
-
   private checkDirectory(directory: string): void {
-    if (!this._userConfiguration.directories.includes(directory)) {
+    if (!isValidDirectory(directory, this._userConfiguration.directories)) {
       throw new Error(`Invalid directory ${directory}`)
     }
   }
