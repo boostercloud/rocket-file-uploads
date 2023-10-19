@@ -17,22 +17,24 @@ export class FileController {
   constructor(readonly storageName: string, readonly containerName: string, readonly directory: string) {
     this.router.put(`/${directory}/:fileName`, this.uploadFile.bind(this))
     this.router.get(`/${directory}/:fileName`, this.getFile.bind(this))
-    this._path = path.join(process.cwd(), this.storageName, this.containerName, this.directory)
+    this._path = path.join(process.cwd(), this.storageName, this.containerName)
   }
 
   public async getFile(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
+    const expectedPath = this.getExpectedPath(req)
     const fileName = req.params.fileName
-    const filePath = path.join(this._path, fileName)
+    const filePath = path.join(expectedPath, fileName)
     res.download(filePath)
   }
 
   public async uploadFile(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
     try {
-      if (!fs.existsSync(this._path)) {
-        fs.mkdirSync(this._path, { recursive: true })
+      const expectedPath = this.getExpectedPath(req)
+      if (!fs.existsSync(expectedPath)) {
+        fs.mkdirSync(expectedPath, { recursive: true })
       }
       const fileName = req.params.fileName
-      const filePath = path.join(this._path, fileName)
+      const filePath = path.join(expectedPath, fileName)
       const writeStream = fs.createWriteStream(filePath)
       req.pipe(writeStream)
       req.on('end', function () {
@@ -60,5 +62,9 @@ export class FileController {
       await requestFailed(err, res)
       next(e)
     }
+  }
+
+  private getExpectedPath(req: express.Request): string {
+    return path.join(this._path, path.parse(req.url).dir)
   }
 }

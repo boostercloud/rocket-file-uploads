@@ -5,7 +5,6 @@ This package is a configurable rocket to add a storage API to your Booster appli
 ## Supported Providers
 
 - Azure Provider
-- AWS Provider
 - Local Provider
 
 ## Overview
@@ -15,7 +14,6 @@ This rocket provides some methods to access files stores in your cloud provider:
 - `presignedPut`: Returns a presigned put url and the necessary form params. With this url files can be uploaded directly to your provider.
 - `presignedGet`: Returns a presigned get url to download a file. With this url files can be downloaded directly from your provider.
 - `list`: Returns a list of files stored in the provider.
-- `deleteFile`: Removes a file from a directory (only supported in AWS at the moment).
 
 These methods may be used from a Command in your project secured via JWT Token.
 
@@ -37,12 +35,6 @@ _Azure Provider:_
 npm install --save @boostercloud/rocket-file-uploads-azure
 ```
 
-_AWS Provider:_
-
-```bash
-npm install --save @boostercloud/rocket-file-uploads-aws
-```
-
 _Local Provider:_
 
 ```bash
@@ -55,12 +47,6 @@ _Azure Provider_
 
 ```bash
 npm install --save-dev @boostercloud/rocket-file-uploads-azure-infrastructure
-```
-
-_AWS Provider_
-
-```bash
-npm install --save-dev @boostercloud/rocket-file-uploads-aws-infrastructure
 ```
 
 _Local Provider:_
@@ -79,7 +65,7 @@ import { RocketFilesUserConfiguration } from '@boostercloud/rocket-file-uploads-
 
 const rocketFilesConfigurationDefault: RocketFilesUserConfiguration = {
   storageName: 'clientst',
-  containerName: 'rocketfiles', // Not used in AWS (you can just pass '' in this case)
+  containerName: 'rocketfiles',
   directories: ['client1', 'client2'],
 }
 
@@ -100,15 +86,6 @@ Booster.configure('production', (config: BoosterConfig): void => {
   ]
 })
 
-// AWS Config:
-Booster.configure('production', (config: BoosterConfig): void => {
-  config.appName = APP_NAME
-  config.providerPackage = '@boostercloud/framework-provider-aws'
-  config.rockets = [
-    new BoosterRocketFiles(config, [rocketFilesConfigurationDefault, rocketFilesConfigurationCms]).rocketForAWS(),
-  ]
-})
-
 // Local Config:
 Booster.configure('local', (config: BoosterConfig): void => {
   config.appName = APP_NAME
@@ -123,8 +100,8 @@ Booster.configure('local', (config: BoosterConfig): void => {
 Available parameters are:
 
 - `storageName`: Name of the storage repository.
-- `containerName`: Directories container (not used in AWS).
-- `directories` A list of folders where the files will be stored
+- `containerName`: Directories container.
+- `directories` A list of dirs to be watched, or [glob patterns](https://en.wikipedia.org/wiki/Glob_(programming))
 
 > [!NOTE] Azure Provider will use `storageName` as the **Storage Account Name**. 
 > Local Provider will use it as the **root folder name**
@@ -137,10 +114,6 @@ The structure created for Azure and the Local Provider will be:
 > [!NOTE] Azure and Local provider urls are not equals. For Local you will need to use:
 > http://localhost:3000/storageName/containerName/filename.ext but for Azure:
 > http://storageAccountUrl:3000/containerName/filename.ext
-
-The `container` parameter is **not used** in AWS, so the structure created will be:
->    * storage
->       * directory
 
 
 ### PresignedPut Usage
@@ -245,76 +218,6 @@ Local Provider will write files on `.<storageName>/rocketfiles` folder
 
 **Note**: Azure will return a 201 status but Local will return a 200
 
-#### AWS
-
-Create a command in your application and call the `presignedGet` method on the FileHandler class with the `directory` and `filename` you want to get on the storage.
-
-The `storageName` parameter is optional. It will use the first storage if undefined.
-
-```typescript
-import { Booster, Command } from '@boostercloud/framework-core'
-import { Register } from '@boostercloud/framework-types'
-import { FileHandler } from '@boostercloud/rocket-file-uploads-core'
-
-// AWS returns these fields in the response:
-export class PresignedPostResponse {
-  public constructor(
-    readonly url: string,
-    readonly fields: { [key: string]: string }
-  ){}
-}
-
-@Command({
-  authorize: 'all', // Add an authentiation role as needed.
-})
-export class FileUploadGet {
-  public constructor(readonly directory: string, readonly fileName: string, readonly storageName?: string) {}
-
-  public static async handle(command: FileUploadGet, register: Register): Promise<PresignedPostResponse> {
-    const boosterConfig = Booster.config
-    const fileHandler = new FileHandler(boosterConfig, command.storageName)
-    return await fileHandler.presignedGet(command.directory, command.fileName)
-  }
-}
-```
-
-GraphQL mutation example:
-
-```
-mutation {
-  FileUploadPut(input: { 
-    directory: "files", 
-    fileName: "lol.jpg"
-  }) {
-    url
-    fields
-  }
-}
-```
-
-
-AWS Response:
-
-```
-{
-  "data": {
-    "FileUploadPut": {
-      "url": "https://s3.eu-west-1.amazonaws.com/myappstorage",
-      "fields": {
-        "Key": "files/lol.jpg",
-        "bucket": "myappstorage",
-        "X-Amz-Algorithm": "AWS4-HMAC-SHA256",
-        "X-Amz-Credential": "blablabla.../eu-west-1/s3/aws4_request",
-        "X-Amz-Date": "20230207T142138Z",
-        "X-Amz-Security-Token": "IQoJb3JpZ2... blablabla",
-        "Policy": "eyJleHBpcmF0a... blablabla",
-        "X-Amz-Signature": "60511... blablabla"
-      }
-    }
-  }
-}
-```
-
 ### PresignedGet Usage
 
 Create a command in your application and call the `presignedGet` method on the FileHandler class with the `directory` and `filename` you want to get on the storage.
@@ -418,7 +321,7 @@ mutation {
 }
 ```
 
-This returns the following payload in Azure and AWS:
+This returns the following payload in Azure:
 
 ```json
 {
@@ -504,7 +407,7 @@ This returns the following payload:
         {
           "id": "f119ef635226888dd1bacd734f8955db",
       "metadata": {
-      		// A bunch of fields (depending on Azure or AWS) 
+      		// A bunch of fields (depending on Azure) 
         }
       ],
       "count": 1,
@@ -544,7 +447,7 @@ For Local
 
 For each upload file a new event will be generated.
 
-On Azure and AWS, the event will be like this:
+On Azure, the event will be like this:
 
 ```json
 {
@@ -558,7 +461,7 @@ On Azure and AWS, the event will be like this:
   "value": {
     "id": "xxx",
     "metadata": {
-      // A bunch of fields (depending on Azure or AWS)
+      // A bunch of fields (depending on Azure)
     }
   },
   "createdAt": "2022-10-26T10:23:36.562Z",
@@ -636,7 +539,6 @@ az role assignment create \
 Local Provider doesn't check `paths`. You should check that the `directory` and `files` passed as paratemers are valid.
 
 ### TODOs:
-- Add file deletion to Azure and Local (only supported in AWS at the moment).
 - Optional storage deletion when unmounting the stack. 
 - Optional events, in case you don't want to store that information in the events-store.
 - When deleting a file, save a deletion event in the events-store. Only uploads are stored at the moment.
