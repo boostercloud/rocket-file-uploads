@@ -8,14 +8,14 @@ import { TerraformRoleAssignment } from './terraform-role-assignment'
 import { TerraformStack } from 'cdktf'
 
 export class Synth {
-  public static mountStack(
+  public static async mountStack(
     configuration: RocketFilesConfiguration,
     config: BoosterConfig,
     applicationSynthStack: ApplicationSynthStack,
     utils: RocketUtils
-  ): ApplicationSynthStack {
+  ): Promise<ApplicationSynthStack> {
     const appPrefix = applicationSynthStack.appPrefix
-    const terraformStackResource = applicationSynthStack.terraformStack as TerraformStack
+    const terraformStackResource = applicationSynthStack.terraformStack as unknown as TerraformStack
     const resourceGroup = applicationSynthStack.resourceGroup!
     const rocketStack = applicationSynthStack.rocketStack ?? []
     const azurermProvider = applicationSynthStack.azureProvider!

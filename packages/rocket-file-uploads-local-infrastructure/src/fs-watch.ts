@@ -9,11 +9,14 @@ export function fsWatch(storageName: string, containerName: string, port: number
   if (!fs.existsSync(_path)) {
     fs.mkdirSync(_path, { recursive: true })
   }
-  fs.watch(_path, { recursive: true }, async (eventType: 'rename' | 'change', filename: string) => {
-    const parsed = path.parse(filename)
-    if (new RegExp(/(^|[/\\])\../).test(filename)) return // ignore files starting with a dot
+  fs.watch(_path, { recursive: true, encoding: 'buffer' }, async (eventType: 'rename' | 'change', filename: Buffer | null) => {
+    if (!filename) return
+    const filenameStr = filename.toString()
+
+    const parsed = path.parse(filenameStr)
+    if (new RegExp(/(^|[/\\])\../).test(filenameStr)) return // ignore files starting with a dot
     if (!isValidDirectory(parsed.dir, directories)) return
-    const name = path.join(storageName, containerName, filename)
+    const name = path.join(storageName, containerName, filenameStr)
     const uri = `http://localhost:${port}/${name}`
     await boosterRocketDispatcher({
       [rocketFunctionIDEnvVar]: functionID,
