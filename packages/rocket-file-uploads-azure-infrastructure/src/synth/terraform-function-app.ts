@@ -20,7 +20,6 @@ export class TerraformFunctionApp {
     const applicationServicePlan = applicationSynthStack.applicationServicePlan!
     const storageAccount = applicationSynthStack.storageAccount!
     const cosmosDatabaseName = applicationSynthStack.cosmosdbDatabase?.name
-    // const apiManagementServiceName = applicationSynthStack.apiManagementName
     const cosmosDbConnectionString = applicationSynthStack.cosmosdbDatabase?.primaryKey
     const functionAppName = getFunctionAppName(applicationSynthStack)
 
@@ -35,7 +34,6 @@ export class TerraformFunctionApp {
         WEBSITE_CONTENTSHARE: id,
         ...config.env,
         BOOSTER_ENV: config.environmentName,
-        // BOOSTER_REST_API_URL: `https://${apiManagementServiceName}.azure-api.net/${config.environmentName}`,
         COSMOSDB_CONNECTION_STRING: `AccountEndpoint=https://${cosmosDatabaseName}.documents.azure.com:443/;AccountKey=${cosmosDbConnectionString};`,
         BOOSTER_ROCKET_FUNCTION_ID: functionID,
         ...accountConnections,
