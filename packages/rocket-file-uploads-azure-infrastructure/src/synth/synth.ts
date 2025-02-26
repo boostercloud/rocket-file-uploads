@@ -5,7 +5,6 @@ import { TerraformFunctionApp } from './terraform-function-app'
 import { TerraformStorageAccount } from './terraform-storage-account'
 import { TerraformStorageContainer } from './terraform-storage-container'
 import { TerraformRoleAssignment } from './terraform-role-assignment'
-import { TerraformStack } from 'cdktf'
 
 export class Synth {
   public static async mountStack(
@@ -15,7 +14,7 @@ export class Synth {
     utils: RocketUtils
   ): Promise<ApplicationSynthStack> {
     const appPrefix = applicationSynthStack.appPrefix
-    const terraformStackResource = applicationSynthStack.terraformStack as unknown as TerraformStack
+    const terraformStackResource = applicationSynthStack.terraformStack
     const resourceGroup = applicationSynthStack.resourceGroup!
     const rocketStack = applicationSynthStack.rocketStack ?? []
     const azurermProvider = applicationSynthStack.azureProvider!
