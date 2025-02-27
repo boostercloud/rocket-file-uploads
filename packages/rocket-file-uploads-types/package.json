@@ -24,14 +24,14 @@
     "url": "git+https://github.com/boostercloud/rocket-files.git"
   },
   "peerDependencies": {
-    "@boostercloud/framework-core": ">= 1.20.0",
-    "@boostercloud/framework-types": ">= 1.20.0"
+    "@boostercloud/framework-core": ">= 3.1.0",
+    "@boostercloud/framework-types": ">= 3.1.0"
   },
   "dependencies": {
-    "minimatch": "3.0.4"
+    "minimatch": "3.0.5"
   },
   "devDependencies": {
-    "@boostercloud/metadata-booster": "1.20.0",
+    "@boostercloud/metadata-booster": "3.1.0",
     "@types/chai": "4.3.8",
     "@types/mocha": "10.0.2",
     "@types/sinon": "10.0.19",
@@ -42,7 +42,7 @@
     "sinon": "16.1.0",
     "sinon-chai": "3.7.0",
     "ts-node": "10.9.1",
-    "typescript": "4.7.4"
+    "@types/node": "^20.17.17"
   },
   "scripts": {
     "lint:check": "eslint --ext '.js,.ts' **/*.ts",
