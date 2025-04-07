@@ -16,12 +16,11 @@ export function fsWatch(storageName: string, containerName: string, port: number
     const parsed = path.parse(filenameStr)
     if (new RegExp(/(^|[/\\])\../).test(filenameStr)) return // ignore files starting with a dot
     if (!isValidDirectory(parsed.dir, directories)) return
-    const name = path.join(storageName, containerName, filenameStr)
-    const uri = `http://localhost:${port}/${name}`
+    const uri = `http://localhost:${port}/${path.join(storageName, containerName, filenameStr)}`
     await boosterRocketDispatcher({
       [rocketFunctionIDEnvVar]: functionID,
       uri: uri,
-      name: name,
+      name: filenameStr,
     })
   })
 }
