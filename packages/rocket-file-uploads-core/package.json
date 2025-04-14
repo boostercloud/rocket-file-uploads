@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-core",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "File Uploads Booster Rocket Core Package",
   "keywords": [
     "Booster",
@@ -28,7 +28,7 @@
     "@boostercloud/framework-types": ">= 3.1.2"
   },
   "dependencies": {
-    "@boostercloud/rocket-file-uploads-types": "^2.0.0"
+    "@boostercloud/rocket-file-uploads-types": "^2.0.2"
   },
   "devDependencies": {
     "@boostercloud/metadata-booster": "3.1.2",
