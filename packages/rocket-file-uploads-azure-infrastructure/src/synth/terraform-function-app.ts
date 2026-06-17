@@ -1,7 +1,7 @@
-import { TerraformStack } from 'cdktf'
-import { windowsFunctionApp } from '@cdktf/provider-azurerm'
+import { TerraformStack } from 'cdktn'
+import { windowsFunctionApp } from '@cdktn/provider-azurerm'
 import { BoosterConfig } from '@boostercloud/framework-types'
-import { AzurermProvider } from '@cdktf/provider-azurerm/lib/provider'
+import { AzurermProvider } from '@cdktn/provider-azurerm/lib/provider'
 
 import { ApplicationSynthStack, RocketUtils } from '@boostercloud/framework-provider-azure-infrastructure'
 import { getFunctionAppName } from '../helper'

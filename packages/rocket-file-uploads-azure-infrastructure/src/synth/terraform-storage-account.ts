@@ -1,9 +1,9 @@
-import { TerraformStack } from 'cdktf'
-import { resourceGroup, storageAccount } from '@cdktf/provider-azurerm'
+import { TerraformStack } from 'cdktn'
+import { resourceGroup, storageAccount } from '@cdktn/provider-azurerm'
 import { RocketUtils } from '@boostercloud/framework-provider-azure-infrastructure'
 import { BoosterConfig } from '@boostercloud/framework-types'
 import { azureStorageName } from '@boostercloud/rocket-file-uploads-types'
-import { AzurermProvider } from '@cdktf/provider-azurerm/lib/provider'
+import { AzurermProvider } from '@cdktn/provider-azurerm/lib/provider'
 
 export class TerraformStorageAccount {
   static build(

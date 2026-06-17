@@ -24,21 +24,21 @@
     "url": "git+https://github.com/boostercloud/rocket-files.git"
   },
   "peerDependencies": {
-    "@boostercloud/framework-core": ">= 4.0.0",
-    "@boostercloud/framework-provider-azure": ">= 4.0.0",
-    "@boostercloud/framework-types": ">= 4.0.0"
+    "@boostercloud/framework-core": ">= 4.0.3",
+    "@boostercloud/framework-provider-azure": ">= 4.0.3",
+    "@boostercloud/framework-types": ">= 4.0.3"
   },
   "dependencies": {
     "@azure/functions": "^4.0.0",
-    "@azure/identity": "4.2.1",
-    "@azure/storage-blob": "^12.0.0",
+    "@azure/identity": "^4.13.1",
+    "@azure/storage-blob": "^12.32.0",
     "@boostercloud/rocket-file-uploads-types": "^3.0.0"
   },
   "devDependencies": {
-    "@boostercloud/framework-core": "4.0.0",
-    "@boostercloud/framework-provider-azure": "4.0.0",
-    "@boostercloud/framework-types": "4.0.0",
-    "@boostercloud/metadata-booster": "4.0.0",
+    "@boostercloud/framework-core": "4.0.3",
+    "@boostercloud/framework-provider-azure": "4.0.3",
+    "@boostercloud/framework-types": "4.0.3",
+    "@boostercloud/metadata-booster": "4.0.3",
     "@types/chai": "4.3.8",
     "@types/mocha": "10.0.2",
     "@types/node": "^22.0.0",

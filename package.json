@@ -6,7 +6,7 @@
     "clean-compile": "lerna run clean && npm ci && lerna run compile"
   },
   "devDependencies": {
-    "@boostercloud/metadata-booster": "^4.0.0",
+    "@boostercloud/metadata-booster": "^4.0.3",
     "@types/jsonwebtoken": "^8.5.9",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
@@ -21,29 +21,24 @@
     "packages/*"
   ],
   "overrides": {
-    "@cdktf/hcl2cdk": {
-      "glob": "10.5.0"
-    },
-    "@cdktf/provider-generator": {
-      "glob": "10.5.0"
-    },
-    "@cdktf/cli-core": {
-      "minimatch": "5.1.9",
-      "glob": "10.5.0"
-    },
-    "cdktf-cli": {
-      "minimatch@^5.0.0": "5.1.9"
-    },
-    "cdktf": {
-      "minimatch": "5.1.9",
-      "glob": "10.5.0"
-    },
     "lerna": {
-      "tar": "7.5.10"
+      "tar": "7.5.16",
+      "axios": "1.18.0"
     },
-    "tar": "7.5.10",
-    "serialize-javascript": "7.0.4",
+    "tar": "7.5.16",
+    "axios": "1.18.0",
+    "serialize-javascript": "7.0.5",
     "validator": "13.15.26",
-    "tmp": "0.2.5"
+    "tmp": "0.2.7",
+    "handlebars": "4.7.9",
+    "shell-quote": "1.8.4",
+    "form-data": "4.0.6",
+    "undici": "7.28.0",
+    "effect": "3.21.3",
+    "flatted": "3.4.2",
+    "lodash": "4.18.1",
+    "express": {
+      "path-to-regexp": "0.1.13"
+    }
   }
 }

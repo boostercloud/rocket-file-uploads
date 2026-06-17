@@ -1,7 +1,7 @@
 import { ApplicationSynthStack, RocketUtils } from '@boostercloud/framework-provider-azure-infrastructure'
-import { roleAssignment, windowsFunctionApp } from '@cdktf/provider-azurerm'
-import { AzurermProvider } from '@cdktf/provider-azurerm/lib/provider'
-import { TerraformStack } from 'cdktf'
+import { roleAssignment, windowsFunctionApp } from '@cdktn/provider-azurerm'
+import { AzurermProvider } from '@cdktn/provider-azurerm/lib/provider'
+import { TerraformStack } from 'cdktn'
 
 export class TerraformRoleAssignment {
   static build(
