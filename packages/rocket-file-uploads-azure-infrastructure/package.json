@@ -1,6 +1,6 @@
 {
   "name": "@boostercloud/rocket-file-uploads-azure-infrastructure",
-  "version": "3.0.1",
+  "version": "3.0.3",
   "description": "File Uploads Booster Rocket Azure Infrastructure Library",
   "keywords": [
     "Booster",
@@ -31,7 +31,7 @@
     "constructs": "^10.6.0"
   },
   "dependencies": {
-    "@boostercloud/rocket-file-uploads-types": "^3.0.1"
+    "@boostercloud/rocket-file-uploads-types": "^3.0.3"
   },
   "devDependencies": {
     "@boostercloud/framework-core": "4.0.4",
