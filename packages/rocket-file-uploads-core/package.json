@@ -31,9 +31,9 @@
     "@boostercloud/rocket-file-uploads-types": "^3.0.1"
   },
   "devDependencies": {
-    "@boostercloud/framework-core": "4.0.3",
-    "@boostercloud/framework-types": "4.0.3",
-    "@boostercloud/metadata-booster": "4.0.3",
+    "@boostercloud/framework-core": "4.0.4",
+    "@boostercloud/framework-types": "4.0.4",
+    "@boostercloud/metadata-booster": "4.0.4",
     "@types/node": "^22.0.0",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
