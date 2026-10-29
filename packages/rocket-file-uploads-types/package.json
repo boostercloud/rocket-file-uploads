@@ -31,9 +31,9 @@
     "minimatch": "3.1.5"
   },
   "devDependencies": {
-    "@boostercloud/framework-core": "4.0.4",
-    "@boostercloud/framework-types": "4.0.4",
-    "@boostercloud/metadata-booster": "4.0.4",
+    "@boostercloud/framework-core": "4.1.0",
+    "@boostercloud/framework-types": "4.1.0",
+    "@boostercloud/metadata-booster": "4.1.0",
     "@types/chai": "4.3.8",
     "@types/minimatch": "5.1.2",
     "@types/mocha": "10.0.2",

@@ -15,7 +15,7 @@ export class TerraformStorageContainer {
     const id = utils.toTerraformName(rocketStorageAccountResource.name, `rfsb${containerName}`)
     return new storageContainer.StorageContainer(terraformStackResource, id, {
       name: containerName,
-      storageAccountName: rocketStorageAccountResource.name,
+      storageAccountId: rocketStorageAccountResource.id,
       containerAccessType: 'private',
       provider: providerResource,
     })

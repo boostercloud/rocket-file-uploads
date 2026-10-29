@@ -6,7 +6,7 @@
     "clean-compile": "lerna run clean && npm ci && lerna run compile"
   },
   "devDependencies": {
-    "@boostercloud/metadata-booster": "^4.0.3",
+    "@boostercloud/metadata-booster": "^4.1.0",
     "@types/jsonwebtoken": "^8.5.9",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
@@ -42,8 +42,6 @@
     "@effect/cli": "0.77.2",
     "@azure/msal-node": "7.1.2",
     "toml": "5.0.1",
-    "cdktn-cli": "0.25.0",
-    "@cdktn/hcl2cdk": "0.25.0",
     "follow-redirects": "1.16.2",
     "ip-address": "10.7.5",
     "smol-toml": "1.9.1",

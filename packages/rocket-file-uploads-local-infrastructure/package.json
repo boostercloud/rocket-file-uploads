@@ -32,10 +32,10 @@
     "express": "4.22.1"
   },
   "devDependencies": {
-    "@boostercloud/framework-core": "4.0.4",
-    "@boostercloud/framework-provider-local-infrastructure": "4.0.4",
-    "@boostercloud/framework-types": "4.0.4",
-    "@boostercloud/metadata-booster": "4.0.4",
+    "@boostercloud/framework-core": "4.1.0",
+    "@boostercloud/framework-provider-local-infrastructure": "4.1.0",
+    "@boostercloud/framework-types": "4.1.0",
+    "@boostercloud/metadata-booster": "4.1.0",
     "@types/express": "^4.17.23",
     "@types/mustache": "^4.1.0",
     "@types/node": "^22.0.0",
